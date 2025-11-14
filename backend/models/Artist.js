@@ -28,8 +28,14 @@ const artistSchema = new mongoose.Schema(
       default: '',
     },
     imageUrl: {
-      type: String,
-      default: '',
+      public_id: {
+        type: String,
+        default: '',
+      },
+      url: {
+        type: String,
+        default: '',
+      },
     },
     genre: {
       type: String,

@@ -6,25 +6,15 @@ import {
   updateEvent,
   deleteEvent,
   getUpcomingEvents,
-  uploadEventImage,
-  getEventImage,
-  deleteEventImage,
 } from '../controllers/eventController.js';
-import { uploadSingle } from '../middleware/upload.js';
+import { uploadSingle, handleUploadError } from '../middleware/upload.js';
+import { parseMultipartJson } from '../middleware/parseMultipartJson.js';
 
 const router = express.Router();
 
 router.get('/upcoming', getUpcomingEvents);
-router.route('/').get(getEvents).post(createEvent);
-
-// Image routes - must be before /:id to avoid route conflicts
-router
-  .route('/:id/image')
-  .post(uploadSingle('image'), uploadEventImage)
-  .get(getEventImage)
-  .delete(deleteEventImage);
-
-router.route('/:id').get(getEvent).put(updateEvent).delete(deleteEvent);
+router.route('/').get(getEvents).post(uploadSingle, handleUploadError, parseMultipartJson, createEvent);
+router.route('/:id').get(getEvent).put(uploadSingle, handleUploadError, parseMultipartJson, updateEvent).delete(deleteEvent);
 
 export default router;
 

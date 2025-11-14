@@ -5,24 +5,14 @@ import {
   createArtist,
   updateArtist,
   deleteArtist,
-  uploadArtistImage,
-  getArtistImage,
-  deleteArtistImage,
 } from '../controllers/artistController.js';
-import { uploadSingle } from '../middleware/upload.js';
+import { uploadSingle, handleUploadError } from '../middleware/upload.js';
+import { parseMultipartJson } from '../middleware/parseMultipartJson.js';
 
 const router = express.Router();
 
-router.route('/').get(getArtists).post(createArtist);
-
-// Image routes - must be before /:id to avoid route conflicts
-router
-  .route('/:id/image')
-  .post(uploadSingle('image'), uploadArtistImage)
-  .get(getArtistImage)
-  .delete(deleteArtistImage);
-
-router.route('/:id').get(getArtist).put(updateArtist).delete(deleteArtist);
+router.route('/').get(getArtists).post(uploadSingle, handleUploadError, parseMultipartJson, createArtist);
+router.route('/:id').get(getArtist).put(uploadSingle, handleUploadError, parseMultipartJson, updateArtist).delete(deleteArtist);
 
 export default router;
 

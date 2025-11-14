@@ -28,8 +28,14 @@ const eventSchema = new mongoose.Schema(
       type: Date,
     },
     imageUrl: {
-      type: String,
-      default: '',
+      public_id: {
+        type: String,
+        default: '',
+      },
+      url: {
+        type: String,
+        default: '',
+      },
     },
     status: {
       type: String,

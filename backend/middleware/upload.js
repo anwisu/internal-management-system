@@ -1,61 +1,64 @@
 import multer from 'multer';
-import { upload } from '../config/cloudinary.js';
 import { BadRequestError } from '../utils/errors.js';
 
 /**
- * Middleware to handle single image upload
+ * Configure multer for memory storage
+ * Files are stored in memory before uploading to Cloudinary
  */
-export const uploadSingle = (fieldName = 'image') => {
-  return (req, res, next) => {
-    const uploadMiddleware = upload.single(fieldName);
+const storage = multer.memoryStorage();
 
-    uploadMiddleware(req, res, (err) => {
-      if (err) {
-        // Handle multer errors
-        if (err instanceof multer.MulterError) {
-          if (err.code === 'LIMIT_FILE_SIZE') {
-            return next(new BadRequestError('File size too large. Maximum size is 5MB.'));
-          }
-          return next(new BadRequestError(`Upload error: ${err.message}`));
-        }
-        // Handle other errors (e.g., file filter errors)
-        return next(new BadRequestError(err.message || 'File upload failed'));
-      }
-
-      // Check if file was uploaded
-      if (!req.file) {
-        return next(new BadRequestError('No image file provided'));
-      }
-
-      next();
-    });
-  };
+/**
+ * File filter to validate image types
+ */
+const fileFilter = (req, file, cb) => {
+  // Allowed image MIME types
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(
+      new BadRequestError(
+        'Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.'
+      ),
+      false
+    );
+  }
 };
 
 /**
- * Middleware to handle multiple image uploads (for future use)
+ * Multer configuration
+ * - Max file size: 5MB
+ * - Single file upload
+ * - File validation enabled
  */
-export const uploadMultiple = (fieldName = 'images', maxCount = 5) => {
-  return (req, res, next) => {
-    const uploadMiddleware = upload.array(fieldName, maxCount);
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB in bytes
+  },
+});
 
-    uploadMiddleware(req, res, (err) => {
-      if (err) {
-        if (err instanceof multer.MulterError) {
-          if (err.code === 'LIMIT_FILE_SIZE') {
-            return next(new BadRequestError('File size too large. Maximum size is 5MB per file.'));
-          }
-          return next(new BadRequestError(`Upload error: ${err.message}`));
-        }
-        return next(new BadRequestError(err.message || 'File upload failed'));
-      }
+/**
+ * Middleware for single image upload
+ * Field name: 'image'
+ */
+export const uploadSingle = upload.single('image');
 
-      if (!req.files || req.files.length === 0) {
-        return next(new BadRequestError('No image files provided'));
-      }
-
-      next();
-    });
-  };
+/**
+ * Error handler for multer errors
+ */
+export const handleUploadError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return next(new BadRequestError('File size too large. Maximum size is 5MB.'));
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return next(new BadRequestError('Unexpected file field.'));
+    }
+    return next(new BadRequestError(`Upload error: ${err.message}`));
+  }
+  next(err);
 };
 

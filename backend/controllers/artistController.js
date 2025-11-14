@@ -1,6 +1,6 @@
 import Artist from '../models/Artist.js';
-import { NotFoundError, BadRequestError } from '../utils/errors.js';
-import cloudinary from '../config/cloudinary.js';
+import { NotFoundError } from '../utils/errors.js';
+import { uploadToCloudinary, deleteOldImage } from '../utils/cloudinaryUpload.js';
 
 /**
  * Get all artists with optional filtering and pagination
@@ -53,8 +53,23 @@ export const getArtist = async (req, res, next) => {
  */
 export const createArtist = async (req, res, next) => {
   try {
-    const artist = await Artist.create(req.body);
-    res.status(201).json({ data: artist });
+    const artistData = { ...req.body };
+
+    // Handle image upload if file is provided
+    if (req.file) {
+      try {
+        const imageData = await uploadToCloudinary(req.file.buffer, 'artists');
+        artistData.imageUrl = imageData;
+      } catch (uploadError) {
+        return next(uploadError);
+      }
+    }
+
+    const artist = await Artist.create(artistData);
+    res.status(201).json({
+      data: artist,
+      message: 'Artist created successfully',
+    });
   } catch (error) {
     next(error);
   }
@@ -65,20 +80,36 @@ export const createArtist = async (req, res, next) => {
  */
 export const updateArtist = async (req, res, next) => {
   try {
-    const artist = await Artist.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const artist = await Artist.findById(req.params.id);
 
     if (!artist) {
       throw new NotFoundError('Artist not found');
     }
 
-    res.json({ data: artist });
+    const updateData = { ...req.body };
+
+    // Handle image upload if new file is provided
+    if (req.file) {
+      try {
+        // Delete old image from Cloudinary
+        await deleteOldImage(artist.imageUrl);
+
+        // Upload new image
+        const imageData = await uploadToCloudinary(req.file.buffer, 'artists');
+        updateData.imageUrl = imageData;
+      } catch (uploadError) {
+        return next(uploadError);
+      }
+    }
+
+    // Update artist
+    Object.assign(artist, updateData);
+    await artist.save();
+
+    res.json({
+      data: artist,
+      message: 'Artist updated successfully',
+    });
   } catch (error) {
     next(error);
   }
@@ -89,122 +120,21 @@ export const updateArtist = async (req, res, next) => {
  */
 export const deleteArtist = async (req, res, next) => {
   try {
-    const artist = await Artist.findByIdAndDelete(req.params.id);
+    const artist = await Artist.findById(req.params.id);
 
     if (!artist) {
       throw new NotFoundError('Artist not found');
     }
+
+    // Delete image from Cloudinary if exists
+    if (artist.imageUrl && artist.imageUrl.public_id) {
+      const { deleteFromCloudinary } = await import('../utils/cloudinaryUpload.js');
+      await deleteFromCloudinary(artist.imageUrl.public_id);
+    }
+
+    await Artist.findByIdAndDelete(req.params.id);
 
     res.json({ message: 'Artist deleted successfully' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * Upload image for artist
- */
-export const uploadArtistImage = async (req, res, next) => {
-  try {
-    const artist = await Artist.findById(req.params.id);
-
-    if (!artist) {
-      throw new NotFoundError('Artist not found');
-    }
-
-    if (!req.file) {
-      throw new BadRequestError('No image file provided');
-    }
-
-    // Delete old image from Cloudinary if exists
-    if (artist.imageUrl) {
-      try {
-        // Extract public_id from Cloudinary URL
-        const urlParts = artist.imageUrl.split('/');
-        const publicIdWithExtension = urlParts.slice(-2).join('/').split('.')[0];
-        const publicId = `artists/${publicIdWithExtension.split('/')[1]}`;
-        await cloudinary.uploader.destroy(publicId);
-      } catch (error) {
-        // Log error but don't fail the upload
-        console.error('Error deleting old image:', error);
-      }
-    }
-
-    // Update artist with new image URL
-    artist.imageUrl = req.file.path;
-    await artist.save();
-
-    res.json({
-      message: 'Image uploaded successfully',
-      data: {
-        imageUrl: artist.imageUrl,
-        artist: artist,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * Get artist image
- */
-export const getArtistImage = async (req, res, next) => {
-  try {
-    const artist = await Artist.findById(req.params.id);
-
-    if (!artist) {
-      throw new NotFoundError('Artist not found');
-    }
-
-    if (!artist.imageUrl) {
-      throw new NotFoundError('No image found for this artist');
-    }
-
-    res.json({
-      data: {
-        imageUrl: artist.imageUrl,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * Delete artist image
- */
-export const deleteArtistImage = async (req, res, next) => {
-  try {
-    const artist = await Artist.findById(req.params.id);
-
-    if (!artist) {
-      throw new NotFoundError('Artist not found');
-    }
-
-    if (!artist.imageUrl) {
-      throw new NotFoundError('No image found for this artist');
-    }
-
-    // Delete image from Cloudinary
-    try {
-      const urlParts = artist.imageUrl.split('/');
-      const publicIdWithExtension = urlParts.slice(-2).join('/').split('.')[0];
-      const publicId = `artists/${publicIdWithExtension.split('/')[1]}`;
-      await cloudinary.uploader.destroy(publicId);
-    } catch (error) {
-      console.error('Error deleting image from Cloudinary:', error);
-      // Continue to remove URL from database even if Cloudinary deletion fails
-    }
-
-    // Remove image URL from artist
-    artist.imageUrl = '';
-    await artist.save();
-
-    res.json({
-      message: 'Image deleted successfully',
-      data: artist,
-    });
   } catch (error) {
     next(error);
   }
