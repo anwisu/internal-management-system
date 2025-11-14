@@ -91,13 +91,13 @@ function Artists() {
         <Chip value="Artists hub" className="w-fit bg-primary-50 text-primary-700 font-semibold" />
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 flex items-center gap-3">
+            <h1 className="text-3xl sm:text-4xl font-bold text-blue-gray-900 flex items-center gap-3">
               <span className="p-2 rounded-2xl bg-primary-100 text-primary-600">
                 <FiUsers className="w-5 h-5" aria-hidden="true" />
               </span>
               Artist directory
             </h1>
-            <p className="text-base text-slate-500 max-w-2xl">
+            <p className="text-base text-blue-gray-500 max-w-2xl">
               Curate individual profiles, manage contact channels, and highlight social presence in one elegant list.
             </p>
           </div>
@@ -123,14 +123,14 @@ function Artists() {
             placeholder="Search artists by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            icon={<FiSearch className="h-5 w-5 text-slate-400" aria-hidden="true" />}
+            icon={<FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />}
             className="pr-8 rounded-2xl bg-white/80 border border-slate-200 focus:border-primary-500 focus:ring-primary-100 shadow-glass"
             autoFocus={false}
             aria-label="Search artists by name"
           />
         </div>
-        <p className="text-sm text-slate-500">
-          Showing <span className="font-semibold text-slate-900">{filteredArtists.length}</span> artist{filteredArtists.length !== 1 && 's'}
+        <p className="text-sm text-blue-gray-500">
+          Showing <span className="font-semibold text-blue-gray-900">{filteredArtists.length}</span> artist{filteredArtists.length !== 1 && 's'}
         </p>
       </section>
 

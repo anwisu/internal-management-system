@@ -97,13 +97,13 @@ function Announcements() {
         />
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 flex items-center gap-3">
+            <h1 className="text-3xl sm:text-4xl font-bold text-blue-gray-900 flex items-center gap-3">
               <span className="p-2 rounded-2xl bg-primary-100 text-primary-600">
                 <BsMegaphone className="w-5 h-5" aria-hidden="true" />
               </span>
               Announcements
             </h1>
-            <p className="text-base text-slate-500 max-w-2xl">
+            <p className="text-base text-blue-gray-500 max-w-2xl">
               Keep everyone aligned with timely updates, release notes, and
               spotlight messages.
             </p>
@@ -131,14 +131,14 @@ function Announcements() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             icon={
-              <FiSearch className="h-5 w-5 text-slate-400" aria-hidden="true" />
+              <FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />
             }
             className="pr-8 rounded-2xl bg-white/80 border border-slate-200 focus:border-primary-500 focus:ring-primary-100 shadow-glass"
             autoFocus={false}
             aria-label="Search announcements by title or content"
           />
         </div>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-blue-gray-500">
           {filteredAnnouncements.length === 0
             ? "No live broadcasts"
             : `Delivering ${filteredAnnouncements.length} announcement${filteredAnnouncements.length !== 1 ? "s" : ""}`}
