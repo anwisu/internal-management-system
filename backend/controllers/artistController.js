@@ -55,10 +55,51 @@ export const createArtist = async (req, res, next) => {
   try {
     const artistData = { ...req.body };
 
+    // Validate required fields
+    if (!artistData.name || typeof artistData.name !== 'string' || artistData.name.trim() === '') {
+      console.error('Validation failed - name is missing or invalid');
+      return res.status(400).json({
+        error: {
+          message: 'Artist name is required',
+          code: 400,
+        },
+      });
+    }
+
+    // Trim the name field
+    artistData.name = artistData.name.trim();
+
+    // Ensure socialMedia is an object, not a string
+    if (artistData.socialMedia) {
+      if (typeof artistData.socialMedia === 'string') {
+        try {
+          artistData.socialMedia = JSON.parse(artistData.socialMedia);
+          console.log('Parsed socialMedia in controller:', artistData.socialMedia);
+        } catch (error) {
+          console.error('Failed to parse socialMedia in controller:', error);
+          artistData.socialMedia = {};
+        }
+      }
+      // Ensure it's a proper object with the expected structure
+      if (typeof artistData.socialMedia === 'object' && !Array.isArray(artistData.socialMedia)) {
+        artistData.socialMedia = {
+          instagram: artistData.socialMedia.instagram || '',
+          twitter: artistData.socialMedia.twitter || '',
+          youtube: artistData.socialMedia.youtube || '',
+        };
+      } else {
+        artistData.socialMedia = {};
+      }
+    } else {
+      artistData.socialMedia = {};
+    }
+
     // Handle image upload if file is provided
-    if (req.file) {
+    // Support both req.file (from upload.single) and req.files (from upload.fields)
+    const file = req.file || (req.files && req.files.image && req.files.image[0]);
+    if (file) {
       try {
-        const imageData = await uploadToCloudinary(req.file.buffer, 'artists');
+        const imageData = await uploadToCloudinary(file.buffer, 'artists');
         artistData.imageUrl = imageData;
       } catch (uploadError) {
         return next(uploadError);
@@ -87,6 +128,32 @@ export const updateArtist = async (req, res, next) => {
     }
 
     const updateData = { ...req.body };
+
+    // Ensure socialMedia is an object, not a string
+    if (updateData.socialMedia) {
+      if (typeof updateData.socialMedia === 'string') {
+        try {
+          updateData.socialMedia = JSON.parse(updateData.socialMedia);
+          console.log('Parsed socialMedia in update controller:', updateData.socialMedia);
+        } catch (error) {
+          console.error('Failed to parse socialMedia in update controller:', error);
+          updateData.socialMedia = {};
+        }
+      }
+      // Ensure it's a proper object with the expected structure
+      if (typeof updateData.socialMedia === 'object' && !Array.isArray(updateData.socialMedia)) {
+        updateData.socialMedia = {
+          instagram: updateData.socialMedia.instagram || '',
+          twitter: updateData.socialMedia.twitter || '',
+          youtube: updateData.socialMedia.youtube || '',
+        };
+      } else {
+        updateData.socialMedia = {};
+      }
+    } else {
+      // If socialMedia is not provided, keep the existing one or set to empty
+      updateData.socialMedia = artist.socialMedia || {};
+    }
 
     // Handle image upload if new file is provided
     if (req.file) {

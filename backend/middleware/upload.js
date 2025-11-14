@@ -43,8 +43,15 @@ const upload = multer({
 /**
  * Middleware for single image upload
  * Field name: 'image'
+ * File is optional - text fields will still be parsed
  */
 export const uploadSingle = upload.single('image');
+
+/**
+ * Alternative: Use fields() to make file optional
+ * This ensures text fields are always parsed
+ */
+export const uploadOptional = upload.fields([{ name: 'image', maxCount: 1 }]);
 
 /**
  * Error handler for multer errors

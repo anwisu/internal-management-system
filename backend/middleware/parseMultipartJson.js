@@ -7,12 +7,27 @@ export const parseMultipartJson = (req, res, next) => {
   const jsonFields = ['socialMedia', 'artists'];
   
   jsonFields.forEach((field) => {
-    if (req.body[field] && typeof req.body[field] === 'string') {
-      try {
-        req.body[field] = JSON.parse(req.body[field]);
-      } catch (error) {
-        // If parsing fails, leave it as is
-        console.warn(`Failed to parse ${field} as JSON:`, error);
+    if (req.body[field]) {
+      // Check if it's a string that needs parsing
+      if (typeof req.body[field] === 'string') {
+        try {
+          const parsed = JSON.parse(req.body[field]);
+          req.body[field] = parsed;
+          console.log(`Parsed ${field} from JSON string:`, parsed);
+        } catch (error) {
+          // If parsing fails, try to handle it gracefully
+          console.warn(`Failed to parse ${field} as JSON:`, error);
+          console.warn(`Value was:`, req.body[field]);
+          // If it's not valid JSON, set to empty object/array based on field
+          if (field === 'socialMedia') {
+            req.body[field] = {};
+          } else if (field === 'artists') {
+            req.body[field] = [];
+          }
+        }
+      } else if (typeof req.body[field] === 'object') {
+        // Already an object, no need to parse
+        console.log(`${field} is already an object:`, req.body[field]);
       }
     }
   });
@@ -32,6 +47,12 @@ export const parseMultipartJson = (req, res, next) => {
   if (req.body.ticketPrice) {
     req.body.ticketPrice = parseFloat(req.body.ticketPrice);
   }
+
+  // Debug: Log the final req.body after parsing
+  console.log('=== parseMultipartJson: After parsing ===');
+  console.log('req.body.socialMedia:', req.body.socialMedia);
+  console.log('req.body.socialMedia type:', typeof req.body.socialMedia);
+  console.log('==========================================');
 
   next();
 };

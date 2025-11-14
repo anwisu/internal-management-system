@@ -59,6 +59,25 @@ export const createEvent = async (req, res, next) => {
   try {
     const eventData = { ...req.body };
 
+    // Ensure artists is an array, not a string
+    if (eventData.artists) {
+      if (typeof eventData.artists === 'string') {
+        try {
+          eventData.artists = JSON.parse(eventData.artists);
+          console.log('Parsed artists in createEvent controller:', eventData.artists);
+        } catch (error) {
+          console.error('Failed to parse artists in createEvent controller:', error);
+          eventData.artists = [];
+        }
+      }
+      // Ensure it's an array
+      if (!Array.isArray(eventData.artists)) {
+        eventData.artists = [];
+      }
+    } else {
+      eventData.artists = [];
+    }
+
     // Handle image upload if file is provided
     if (req.file) {
       try {
@@ -95,6 +114,26 @@ export const updateEvent = async (req, res, next) => {
     }
 
     const updateData = { ...req.body };
+
+    // Ensure artists is an array, not a string
+    if (updateData.artists) {
+      if (typeof updateData.artists === 'string') {
+        try {
+          updateData.artists = JSON.parse(updateData.artists);
+          console.log('Parsed artists in updateEvent controller:', updateData.artists);
+        } catch (error) {
+          console.error('Failed to parse artists in updateEvent controller:', error);
+          updateData.artists = [];
+        }
+      }
+      // Ensure it's an array
+      if (!Array.isArray(updateData.artists)) {
+        updateData.artists = [];
+      }
+    } else {
+      // If artists is not provided, keep the existing one or set to empty
+      updateData.artists = event.artists || [];
+    }
 
     // Handle image upload if new file is provided
     if (req.file) {
