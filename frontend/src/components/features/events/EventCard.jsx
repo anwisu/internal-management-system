@@ -1,5 +1,6 @@
 import { Card, CardBody, Chip, Button, Avatar } from '@material-tailwind/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { FiCalendar } from 'react-icons/fi';
 import { formatDateTime } from '../../../utils/formatters';
 
 /**
@@ -15,77 +16,86 @@ function EventCard({ event, onEdit, onDelete }) {
   };
 
   return (
-    <Card className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200">
-      <CardBody className="p-0">
-        {(event.imageUrl?.url || event.imageUrl) && (
-          <img
-            src={event.imageUrl?.url || event.imageUrl}
-            alt={event.title}
-            className="w-full h-48 object-cover rounded-lg mb-4"
-          />
-        )}
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="text-xl font-medium text-gray-700">{event.title}</h3>
+    <Card className="bg-white/90 backdrop-blur rounded-2xl border border-white/70 shadow-glass hover:-translate-y-1 hover:shadow-soft-lg transition-all duration-200">
+      <CardBody className="p-0 flex flex-col">
+        <div className="relative">
+          {(event.imageUrl?.url || event.imageUrl) ? (
+            <img
+              src={event.imageUrl?.url || event.imageUrl}
+              alt={event.title}
+              className="w-full h-48 object-cover rounded-t-2xl"
+            />
+          ) : (
+            <div className="w-full h-48 rounded-t-2xl bg-gradient-to-br from-primary-100 to-white flex items-center justify-center text-primary-500">
+              <FiCalendar className="w-10 h-10" aria-hidden="true" />
+            </div>
+          )}
           <Chip
             value={event.status}
             color={statusColorMap[event.status] || 'gray'}
             size="sm"
-            className="rounded-lg"
+            className="absolute top-4 left-4 rounded-full bg-white/90 text-slate-700 shadow"
           />
         </div>
-        {event.venue && (
-          <p className="text-sm text-gray-500 mb-2">{event.venue}</p>
-        )}
-        {event.startDate && (
-          <p className="text-sm text-gray-500 mb-2">{formatDateTime(event.startDate)}</p>
-        )}
-        {event.description && (
-          <p className="text-base text-gray-700 mb-4 line-clamp-2">{event.description}</p>
-        )}
-        {event.artists && event.artists.length > 0 && (
-          <div className="flex items-center gap-2 mb-4">
-            <p className="text-sm text-gray-500 mr-2">Artists:</p>
-            <div className="flex -space-x-2">
-              {event.artists.slice(0, 3).map((artist) => (
-                <Avatar
-                  key={artist._id}
-                  src={artist.imageUrl?.url || artist.imageUrl}
-                  alt={artist.name}
-                  size="sm"
-                  variant="circular"
-                />
-              ))}
-              {event.artists.length > 3 && (
-                <Avatar
-                  size="sm"
-                  variant="circular"
-                  className="bg-gray-300 text-gray-700"
-                >
-                  +{event.artists.length - 3}
-                </Avatar>
-              )}
-            </div>
+        <div className="p-5 flex flex-col flex-1 space-y-3">
+          <div>
+            <h3 className="text-xl font-semibold text-slate-900">{event.title}</h3>
+            {event.venue && (
+              <p className="text-sm text-slate-500 mt-1">{event.venue}</p>
+            )}
+            {event.startDate && (
+              <p className="text-xs text-slate-400">{formatDateTime(event.startDate)}</p>
+            )}
           </div>
-        )}
-        <div className="flex gap-2 mt-4">
-          <Button
-            size="sm"
-            onClick={() => onEdit(event)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            aria-label={`Edit ${event.title}`}
-          >
-            <PencilIcon className="h-4 w-4" aria-hidden="true" />
-            <span>Edit</span>
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => onDelete(event)}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            aria-label={`Delete ${event.title}`}
-          >
-            <TrashIcon className="h-4 w-4" aria-hidden="true" />
-            <span>Delete</span>
-          </Button>
+          {event.description && (
+            <p className="text-sm text-slate-600 line-clamp-3 flex-1">{event.description}</p>
+          )}
+          {event.artists && event.artists.length > 0 && (
+            <div className="flex items-center gap-2">
+              <p className="text-xs uppercase tracking-wide text-slate-400">Artists</p>
+              <div className="flex -space-x-2">
+                {event.artists.slice(0, 3).map((artist) => (
+                  <Avatar
+                    key={artist._id}
+                    src={artist.imageUrl?.url || artist.imageUrl}
+                    alt={artist.name}
+                    size="sm"
+                    variant="circular"
+                    className="ring-2 ring-white"
+                  />
+                ))}
+                {event.artists.length > 3 && (
+                  <Avatar
+                    size="sm"
+                    variant="circular"
+                    className="bg-slate-200 text-slate-700 ring-2 ring-white"
+                  >
+                    +{event.artists.length - 3}
+                  </Avatar>
+                )}
+              </div>
+            </div>
+          )}
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button
+              size="sm"
+              onClick={() => onEdit(event)}
+              className="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              aria-label={`Edit ${event.title}`}
+            >
+              <PencilIcon className="h-4 w-4" aria-hidden="true" />
+              <span>Edit</span>
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => onDelete(event)}
+              className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+              aria-label={`Delete ${event.title}`}
+            >
+              <TrashIcon className="h-4 w-4" aria-hidden="true" />
+              <span>Delete</span>
+            </Button>
+          </div>
         </div>
       </CardBody>
     </Card>

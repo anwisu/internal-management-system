@@ -147,7 +147,7 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} className="space-y-4 overflow-y-auto pr-2">
+    <form onSubmit={formik.handleSubmit} className="space-y-4 overflow-y-auto pr-2 py-2">
       <FormField
         label="Name"
         name="name"

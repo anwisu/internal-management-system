@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Card, CardBody } from '@material-tailwind/react';
+import { Card, CardBody, Chip } from '@material-tailwind/react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   fetchDashboardStats,
@@ -11,6 +11,7 @@ import EventCard from '../components/features/events/EventCard';
 import AnnouncementCard from '../components/features/announcements/AnnouncementCard';
 import { Link } from 'react-router-dom';
 import { Button } from '@material-tailwind/react';
+import { FiActivity, FiCalendar, FiBell } from 'react-icons/fi';
 
 /**
  * Dashboard page component
@@ -33,106 +34,143 @@ function Dashboard() {
   }
 
   return (
-    <div className="w-full">
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-700 mb-6">Dashboard</h1>
-
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8">
-        <Card className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200">
-          <CardBody className="p-0">
-            <p className="text-sm text-gray-500 mb-2">Artists</p>
-            <h3 className="text-3xl font-bold text-gray-700 mb-1">
-              {stats?.artists?.total || 0}
-            </h3>
-            <p className="text-sm text-gray-500">
-              {stats?.artists?.active || 0} active
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200">
-          <CardBody className="p-0">
-            <p className="text-sm text-gray-500 mb-2">Events</p>
-            <h3 className="text-3xl font-bold text-gray-700 mb-1">
-              {stats?.events?.total || 0}
-            </h3>
-            <p className="text-sm text-gray-500">
-              {stats?.events?.upcoming || 0} upcoming
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200">
-          <CardBody className="p-0">
-            <p className="text-sm text-gray-500 mb-2">Announcements</p>
-            <h3 className="text-3xl font-bold text-gray-700 mb-1">
-              {stats?.announcements?.total || 0}
-            </h3>
-            <p className="text-sm text-gray-500">
-              {stats?.announcements?.active || 0} active
-            </p>
-          </CardBody>
-        </Card>
-      </div>
+    <div className="w-full space-y-10">
+      <section className="space-y-4">
+        <div className="flex flex-col gap-4">
+          <Chip value="Welcome back" color="blue" variant="ghost" className="w-fit bg-primary-50 text-primary-700 font-semibold" />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">Dashboard</h1>
+              <p className="text-base text-slate-500 max-w-2xl">
+                Monitor artists, upcoming events, and community announcements from a single, elegant control room.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/events">
+                <Button className="bg-primary-600 hover:bg-primary-700 shadow-soft-lg text-sm px-5 py-2 rounded-full">
+                  Schedule event
+                </Button>
+              </Link>
+              <Link to="/artists">
+                <Button variant="outlined" className="border-primary-200 text-primary-600 px-5 py-2 rounded-full">
+                  Add artist
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
+          <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
+            <CardBody className="p-0 space-y-2">
+              <div className="flex items-center gap-3 text-slate-500 text-sm">
+                <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
+                  <FiActivity className="w-5 h-5" aria-hidden="true" />
+                </div>
+                Artists overview
+              </div>
+              <h3 className="text-4xl font-extrabold text-slate-900">{stats?.artists?.total || 0}</h3>
+              <p className="text-sm text-slate-500">
+                <span className="font-semibold text-primary-600">{stats?.artists?.active || 0}</span> active profiles
+              </p>
+            </CardBody>
+          </Card>
+          <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
+            <CardBody className="p-0 space-y-2">
+              <div className="flex items-center gap-3 text-slate-500 text-sm">
+                <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
+                  <FiCalendar className="w-5 h-5" aria-hidden="true" />
+                </div>
+                Event pipeline
+              </div>
+              <h3 className="text-4xl font-extrabold text-slate-900">{stats?.events?.total || 0}</h3>
+              <p className="text-sm text-slate-500">
+                <span className="font-semibold text-primary-600">{stats?.events?.upcoming || 0}</span> upcoming engagements
+              </p>
+            </CardBody>
+          </Card>
+          <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
+            <CardBody className="p-0 space-y-2">
+              <div className="flex items-center gap-3 text-slate-500 text-sm">
+                <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
+                  <FiBell className="w-5 h-5" aria-hidden="true" />
+                </div>
+                Announcements radar
+              </div>
+              <h3 className="text-4xl font-extrabold text-slate-900">{stats?.announcements?.total || 0}</h3>
+              <p className="text-sm text-slate-500">
+                <span className="font-semibold text-primary-600">{stats?.announcements?.active || 0}</span> actively broadcasting
+              </p>
+            </CardBody>
+          </Card>
+        </div>
+      </section>
 
       {/* Upcoming Events */}
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-700">Upcoming Events</h2>
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-sm uppercase tracking-wide text-slate-400">Events</p>
+            <h2 className="text-2xl font-semibold text-slate-900">Upcoming experiences</h2>
+            <p className="text-sm text-slate-500 mt-1">Preview what’s next in the calendar.</p>
+          </div>
           <Link to="/events" className="w-full sm:w-auto">
             <Button 
               size="sm" 
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto"
+              className="bg-primary-600 text-white px-5 py-2 rounded-full shadow-soft-lg hover:bg-primary-700 w-full sm:w-auto"
               aria-label="View all events"
             >
-              View All
+              View all
             </Button>
           </Link>
         </div>
         {(!upcomingEvents || upcomingEvents.length === 0) ? (
-          <Card className="bg-white rounded-xl shadow-md p-6">
-            <CardBody className="p-0 text-center text-gray-500">
-              No upcoming events
+          <Card className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-500">
+            <CardBody className="p-0">
+              Nothing on the horizon just yet. Plan your next event!
             </CardBody>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {upcomingEvents.slice(0, 3).map((event) => (
               <div key={event._id}>
-                <Link to="/events" className="focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-xl">
+                <Link to="/events" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-xl">
                   <EventCard event={event} onEdit={() => {}} onDelete={() => {}} />
                 </Link>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </section>
 
       {/* Active Announcements */}
-      <div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-700">Active Announcements</h2>
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-sm uppercase tracking-wide text-slate-400">Announcements</p>
+            <h2 className="text-2xl font-semibold text-slate-900">Active broadcasts</h2>
+            <p className="text-sm text-slate-500 mt-1">Keep everyone in sync with clear messaging.</p>
+          </div>
           <Link to="/announcements" className="w-full sm:w-auto">
             <Button 
               size="sm" 
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto"
+              className="bg-primary-600 text-white px-5 py-2 rounded-full shadow-soft-lg hover:bg-primary-700 w-full sm:w-auto"
               aria-label="View all announcements"
             >
-              View All
+              View all
             </Button>
           </Link>
         </div>
         {(!activeAnnouncements || activeAnnouncements.length === 0) ? (
-          <Card className="bg-white rounded-xl shadow-md p-6">
-            <CardBody className="p-0 text-center text-gray-500">
-              No active announcements
+          <Card className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-slate-500">
+            <CardBody className="p-0">
+              No active announcements. Share an update to keep the team aligned.
             </CardBody>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {activeAnnouncements.slice(0, 3).map((announcement) => (
               <div key={announcement._id}>
-                <Link to="/announcements" className="focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-xl">
+                <Link to="/announcements" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-xl">
                   <AnnouncementCard
                     announcement={announcement}
                     onEdit={() => {}}
@@ -143,7 +181,7 @@ function Dashboard() {
             ))}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

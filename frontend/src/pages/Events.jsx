@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button, Input } from '@material-tailwind/react';
+import { Button, Input, Chip } from '@material-tailwind/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiCalendar } from 'react-icons/fi';
 import EventCard from '../components/features/events/EventCard';
 import Modal from '../components/common/Modal';
 import EventForm from '../components/forms/EventForm';
@@ -87,20 +87,33 @@ function Events() {
   }
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-700">Events</h1>
-        <Button
-          onClick={handleCreate}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto"
-          aria-label="Add new event"
-        >
-          <PlusIcon className="h-5 w-5" aria-hidden="true" />
-          <span>Add Event</span>
-        </Button>
-      </div>
+    <div className="w-full space-y-8">
+      <section className="space-y-4">
+        <Chip value="Event command center" className="w-fit bg-primary-50 text-primary-700 font-semibold" />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 flex items-center gap-3">
+              <span className="p-2 rounded-2xl bg-primary-100 text-primary-600">
+                <FiCalendar className="w-5 h-5" aria-hidden="true" />
+              </span>
+              Events & showcases
+            </h1>
+            <p className="text-base text-slate-500 max-w-2xl">
+              Design memorable experiences, align venues, and ensure the right artists take the stage.
+            </p>
+          </div>
+          <Button
+            onClick={handleCreate}
+            className="bg-primary-600 text-white px-5 py-3 rounded-full hover:bg-primary-700 shadow-soft-lg flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary-500 w-full sm:w-auto"
+            aria-label="Add new event"
+          >
+            <PlusIcon className="h-5 w-5" aria-hidden="true" />
+            <span>Schedule event</span>
+          </Button>
+        </div>
+      </section>
 
-      <div className="mb-6">
+      <section className="space-y-3">
         <div className="relative">
           <label htmlFor="event-search" className="sr-only">
             Search events
@@ -108,16 +121,19 @@ function Events() {
           <Input
             id="event-search"
             type="text"
-            placeholder="Search events..."
+            placeholder="Search events by title or venue..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            icon={<FiSearch className="h-5 w-5" aria-hidden="true" />}
-            className="pr-8 rounded-lg shadow-md"
+            icon={<FiSearch className="h-5 w-5 text-slate-400" aria-hidden="true" />}
+            className="pr-8 rounded-2xl bg-white/80 border border-slate-200 focus:border-primary-500 focus:ring-primary-100 shadow-glass"
             autoFocus={false}
             aria-label="Search events by title or venue"
           />
         </div>
-      </div>
+        <p className="text-sm text-slate-500">
+          Displaying <span className="font-semibold text-slate-900">{filteredEvents.length}</span> event{filteredEvents.length !== 1 && 's'}
+        </p>
+      </section>
 
       {filteredEvents.length === 0 ? (
         <EmptyState
@@ -126,7 +142,7 @@ function Events() {
           onAction={!debouncedSearch ? handleCreate : undefined}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {filteredEvents.map((event) => (
             <EventCard
               key={event._id}
