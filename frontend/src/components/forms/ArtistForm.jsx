@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Typography, Button } from '@material-tailwind/react';
+import { Button } from '@material-tailwind/react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FilePond, registerPlugin } from 'react-filepond';
@@ -54,23 +54,40 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      bio: '',
+    name: '',
+    bio: '',
       image: null,
-      genre: '',
-      contactEmail: '',
-      contactPhone: '',
-      socialMedia: {
-        instagram: '',
-        twitter: '',
-        youtube: '',
-      },
-      status: 'active',
+    genre: '',
+    contactEmail: '',
+    contactPhone: '',
+    socialMedia: {
+      instagram: '',
+      twitter: '',
+      youtube: '',
+    },
+    status: 'active',
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        await onSubmit(values);
+        // Ensure name is trimmed and not empty
+        if (!values.name || values.name.trim() === '') {
+          formik.setFieldError('name', 'Name is required');
+          setSubmitting(false);
+          return;
+        }
+        
+        // Trim all string values before submission
+        const trimmedValues = {
+          ...values,
+          name: values.name.trim(),
+          bio: values.bio?.trim() || '',
+          genre: values.genre?.trim() || '',
+          contactEmail: values.contactEmail?.trim() || '',
+          contactPhone: values.contactPhone?.trim() || '',
+        };
+        
+        await onSubmit(trimmedValues);
       } catch (error) {
         console.error('Form submission error:', error);
       } finally {
@@ -105,9 +122,19 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
   const handleFilePondUpdate = (fileItems) => {
     if (fileItems.length > 0) {
       const fileItem = fileItems[0];
-      // Only set File objects (new uploads)
-      if (fileItem.file instanceof File) {
-        formik.setFieldValue('image', fileItem.file);
+      let fileToStore = fileItem.file;
+
+      // Some browsers return a generic Blob instead of File.
+      // Convert it explicitly so FormData sets the filename correctly.
+      if (fileToStore && !(fileToStore instanceof File)) {
+        fileToStore = new File([fileToStore], fileToStore.name || 'upload.jpg', {
+          type: fileToStore.type || 'image/jpeg',
+          lastModified: Date.now(),
+        });
+      }
+
+      if (fileToStore) {
+        formik.setFieldValue('image', fileToStore);
         formik.setFieldTouched('image', true);
       }
     } else {
@@ -120,7 +147,7 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+    <form onSubmit={formik.handleSubmit} className="space-y-4 overflow-y-auto pr-2">
       <FormField
         label="Name"
         name="name"
@@ -148,6 +175,7 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
         </label>
         <FilePond
           ref={pondRef}
+          name="image"
           files={formik.values.image instanceof File ? [formik.values.image] : []}
           onupdatefiles={handleFilePondUpdate}
           onremovefile={handleFilePondRemove}
@@ -171,9 +199,9 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
           styleButtonProcessItemPosition="right"
         />
         {formik.touched.image && formik.errors.image && (
-          <Typography variant="small" color="red" className="mt-1">
+          <p className="text-red-500 text-sm mt-1">
             {formik.errors.image}
-          </Typography>
+          </p>
         )}
         {artist?.imageUrl?.url && !formik.values.image && (
           <div className="mt-2 relative inline-block">
@@ -182,9 +210,9 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
               alt="Current"
               className="h-32 w-auto rounded-lg border border-gray-300"
             />
-            <Typography variant="small" color="gray" className="mt-1">
+            <p className="text-sm text-gray-500 mt-1">
               Current image (upload new image to replace)
-            </Typography>
+            </p>
           </div>
         )}
       </div>
@@ -218,9 +246,9 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
       />
 
       <div className="mb-4">
-        <Typography variant="h6" className="mb-2">
+        <h3 className="text-xl font-medium text-gray-700 mb-2">
           Social Media
-        </Typography>
+        </h3>
         <FormField
           label="Instagram"
           name="socialMedia.instagram"
@@ -276,11 +304,22 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
         }))}
       />
 
-      <div className="flex gap-2 justify-end mt-6 pt-4 border-t">
-        <Button type="button" variant="outlined" onClick={onCancel} disabled={formik.isSubmitting}>
+      <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6 pt-4 border-t border-gray-200">
+        <Button 
+          type="button" 
+          onClick={onCancel} 
+          disabled={formik.isSubmitting}
+          className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-full sm:w-auto order-2 sm:order-1"
+          aria-label="Cancel form"
+        >
           Cancel
         </Button>
-        <Button type="submit" color="blue" disabled={formik.isSubmitting}>
+        <Button 
+          type="submit" 
+          disabled={formik.isSubmitting}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto order-1 sm:order-2"
+          aria-label={formik.isSubmitting ? 'Saving artist' : artist ? 'Update artist' : 'Create artist'}
+        >
           {formik.isSubmitting ? 'Saving...' : artist ? 'Update' : 'Create'} Artist
         </Button>
       </div>

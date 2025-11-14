@@ -1,4 +1,4 @@
-import { Card, CardBody, Typography, Chip, Button } from '@material-tailwind/react';
+import { Card, CardBody, Chip, Button } from '@material-tailwind/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { formatDate } from '../../../utils/formatters';
 
@@ -14,27 +14,24 @@ function AnnouncementCard({ announcement, onEdit, onDelete }) {
   };
 
   return (
-    <Card className="shadow-md hover:shadow-lg transition-shadow">
-      <CardBody className="p-6">
+    <Card className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200">
+      <CardBody className="p-0">
         <div className="flex items-start justify-between mb-2">
-          <Typography variant="h5" color="blue-gray">
-            {announcement.title}
-          </Typography>
+          <h3 className="text-xl font-medium text-gray-700">{announcement.title}</h3>
           <div className="flex gap-2">
             <Chip
               value={announcement.priority}
               color={priorityColorMap[announcement.priority] || 'gray'}
               size="sm"
+              className="rounded-lg"
             />
             {announcement.isActive && (
-              <Chip value="Active" color="green" size="sm" />
+              <Chip value="Active" color="green" size="sm" className="rounded-lg" />
             )}
           </div>
         </div>
         {announcement.content && (
-          <Typography variant="paragraph" color="gray" className="mb-4">
-            {announcement.content}
-          </Typography>
+          <p className="text-base text-gray-700 mb-4">{announcement.content}</p>
         )}
         <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
           {announcement.author && (
@@ -47,23 +44,21 @@ function AnnouncementCard({ announcement, onEdit, onDelete }) {
         <div className="flex gap-2 mt-4">
           <Button
             size="sm"
-            variant="outlined"
-            color="blue"
             onClick={() => onEdit(announcement)}
-            className="flex items-center gap-1"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label={`Edit ${announcement.title}`}
           >
-            <PencilIcon className="h-4 w-4" />
-            Edit
+            <PencilIcon className="h-4 w-4" aria-hidden="true" />
+            <span>Edit</span>
           </Button>
           <Button
             size="sm"
-            variant="outlined"
-            color="red"
             onClick={() => onDelete(announcement)}
-            className="flex items-center gap-1"
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            aria-label={`Delete ${announcement.title}`}
           >
-            <TrashIcon className="h-4 w-4" />
-            Delete
+            <TrashIcon className="h-4 w-4" aria-hidden="true" />
+            <span>Delete</span>
           </Button>
         </div>
       </CardBody>

@@ -1,4 +1,4 @@
-import { Card, CardBody, Typography, Chip, Button } from '@material-tailwind/react';
+import { Card, CardBody, Chip, Button } from '@material-tailwind/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 /**
@@ -13,55 +13,48 @@ function ArtistCard({ artist, onEdit, onDelete }) {
   };
 
   return (
-    <Card className="shadow-md hover:shadow-lg transition-shadow">
-      <CardBody className="p-6">
-        {artist.imageUrl?.url && (
+    <Card className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200">
+      <CardBody className="p-0">
+        {(artist.imageUrl?.url || artist.imageUrl) && (
           <img
-            src={artist.imageUrl.url}
+            src={artist.imageUrl?.url || artist.imageUrl}
             alt={artist.name}
             className="w-full h-48 object-cover rounded-lg mb-4"
           />
         )}
         <div className="flex items-start justify-between mb-2">
-          <Typography variant="h5" color="blue-gray">
-            {artist.name}
-          </Typography>
+          <h3 className="text-xl font-medium text-gray-700">{artist.name}</h3>
           <Chip
             value={artist.status}
             color={statusColorMap[artist.status] || 'gray'}
             size="sm"
+            className="rounded-lg"
           />
         </div>
         {artist.genre && (
-          <Typography variant="small" color="gray" className="mb-2">
-            {artist.genre}
-          </Typography>
+          <p className="text-sm text-gray-500 mb-2">{artist.genre}</p>
         )}
         {artist.bio && (
-          <Typography variant="paragraph" color="gray" className="mb-4 line-clamp-2">
-            {artist.bio}
-          </Typography>
+          <p className="text-base text-gray-700 mb-4 line-clamp-2">{artist.bio}</p>
         )}
         <div className="flex gap-2 mt-4">
           <Button
             size="sm"
-            variant="outlined"
-            color="blue"
             onClick={() => onEdit(artist)}
-            className="flex items-center gap-1"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label={`Edit ${artist.name}`}
           >
-            <PencilIcon className="h-4 w-4" />
-            Edit
+            <PencilIcon className="h-4 w-4" aria-hidden="true" />
+            <span>Edit</span>
           </Button>
           <Button
             size="sm"
-            variant="outlined"
-            color="red"
             onClick={() => onDelete(artist)}
-            className="flex items-center gap-1"
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            aria-label={`Delete ${artist.name}`}
           >
-            <TrashIcon className="h-4 w-4" />
-            Delete
+            <TrashIcon className="h-4 w-4" aria-hidden="true" />
+            <span>Delete</span>
           </Button>
         </div>
       </CardBody>

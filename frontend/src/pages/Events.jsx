@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Typography, Button, Input } from '@material-tailwind/react';
-import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Button, Input } from '@material-tailwind/react';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import { FiSearch } from 'react-icons/fi';
 import EventCard from '../components/features/events/EventCard';
 import Modal from '../components/common/Modal';
 import EventForm from '../components/forms/EventForm';
@@ -80,34 +81,40 @@ function Events() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <Typography color="red">{error}</Typography>
+        <p className="text-red-500 text-base">{error}</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <Typography variant="h2">Events</Typography>
+    <div className="w-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-700">Events</h1>
         <Button
-          color="blue"
           onClick={handleCreate}
-          className="flex items-center gap-2"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto"
+          aria-label="Add new event"
         >
-          <PlusIcon className="h-5 w-5" />
-          Add Event
+          <PlusIcon className="h-5 w-5" aria-hidden="true" />
+          <span>Add Event</span>
         </Button>
       </div>
 
       <div className="mb-6">
         <div className="relative">
+          <label htmlFor="event-search" className="sr-only">
+            Search events
+          </label>
           <Input
+            id="event-search"
             type="text"
             placeholder="Search events..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-            className="pr-8"
+            icon={<FiSearch className="h-5 w-5" aria-hidden="true" />}
+            className="pr-8 rounded-lg shadow-md"
+            autoFocus={false}
+            aria-label="Search events by title or venue"
           />
         </div>
       </div>
@@ -119,7 +126,7 @@ function Events() {
           onAction={!debouncedSearch ? handleCreate : undefined}
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-6">
           {filteredEvents.map((event) => (
             <EventCard
               key={event._id}
@@ -139,6 +146,7 @@ function Events() {
         }}
         title={selectedEvent ? 'Edit Event' : 'Create Event'}
         size="lg"
+        aria-label={selectedEvent ? 'Edit event form' : 'Create event form'}
       >
         <EventForm
           event={selectedEvent}

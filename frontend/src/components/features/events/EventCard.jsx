@@ -1,6 +1,6 @@
-import { Card, CardBody, Typography, Chip, Button, Avatar } from '@material-tailwind/react';
+import { Card, CardBody, Chip, Button, Avatar } from '@material-tailwind/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { formatDate, formatDateTime } from '../../../utils/formatters';
+import { formatDateTime } from '../../../utils/formatters';
 
 /**
  * Event Card component
@@ -15,45 +15,36 @@ function EventCard({ event, onEdit, onDelete }) {
   };
 
   return (
-    <Card className="shadow-md hover:shadow-lg transition-shadow">
-      <CardBody className="p-6">
-        {event.imageUrl?.url && (
+    <Card className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200">
+      <CardBody className="p-0">
+        {(event.imageUrl?.url || event.imageUrl) && (
           <img
-            src={event.imageUrl.url}
+            src={event.imageUrl?.url || event.imageUrl}
             alt={event.title}
             className="w-full h-48 object-cover rounded-lg mb-4"
           />
         )}
         <div className="flex items-start justify-between mb-2">
-          <Typography variant="h5" color="blue-gray">
-            {event.title}
-          </Typography>
+          <h3 className="text-xl font-medium text-gray-700">{event.title}</h3>
           <Chip
             value={event.status}
             color={statusColorMap[event.status] || 'gray'}
             size="sm"
+            className="rounded-lg"
           />
         </div>
         {event.venue && (
-          <Typography variant="small" color="gray" className="mb-2">
-            {event.venue}
-          </Typography>
+          <p className="text-sm text-gray-500 mb-2">{event.venue}</p>
         )}
         {event.startDate && (
-          <Typography variant="small" color="gray" className="mb-2">
-            {formatDateTime(event.startDate)}
-          </Typography>
+          <p className="text-sm text-gray-500 mb-2">{formatDateTime(event.startDate)}</p>
         )}
         {event.description && (
-          <Typography variant="paragraph" color="gray" className="mb-4 line-clamp-2">
-            {event.description}
-          </Typography>
+          <p className="text-base text-gray-700 mb-4 line-clamp-2">{event.description}</p>
         )}
         {event.artists && event.artists.length > 0 && (
           <div className="flex items-center gap-2 mb-4">
-            <Typography variant="small" className="mr-2">
-              Artists:
-            </Typography>
+            <p className="text-sm text-gray-500 mr-2">Artists:</p>
             <div className="flex -space-x-2">
               {event.artists.slice(0, 3).map((artist) => (
                 <Avatar
@@ -79,23 +70,21 @@ function EventCard({ event, onEdit, onDelete }) {
         <div className="flex gap-2 mt-4">
           <Button
             size="sm"
-            variant="outlined"
-            color="blue"
             onClick={() => onEdit(event)}
-            className="flex items-center gap-1"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label={`Edit ${event.title}`}
           >
-            <PencilIcon className="h-4 w-4" />
-            Edit
+            <PencilIcon className="h-4 w-4" aria-hidden="true" />
+            <span>Edit</span>
           </Button>
           <Button
             size="sm"
-            variant="outlined"
-            color="red"
             onClick={() => onDelete(event)}
-            className="flex items-center gap-1"
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            aria-label={`Delete ${event.title}`}
           >
-            <TrashIcon className="h-4 w-4" />
-            Delete
+            <TrashIcon className="h-4 w-4" aria-hidden="true" />
+            <span>Delete</span>
           </Button>
         </div>
       </CardBody>

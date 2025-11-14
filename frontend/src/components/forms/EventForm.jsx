@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Typography, Button } from '@material-tailwind/react';
+import { Button } from '@material-tailwind/react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FilePond, registerPlugin } from 'react-filepond';
@@ -71,17 +71,17 @@ function EventForm({ event = null, onSubmit, onCancel }) {
 
   const formik = useFormik({
     initialValues: {
-      title: '',
-      description: '',
-      venue: '',
-      location: '',
-      startDate: '',
-      endDate: '',
+    title: '',
+    description: '',
+    venue: '',
+    location: '',
+    startDate: '',
+    endDate: '',
       image: null,
-      status: 'upcoming',
-      artists: [],
-      capacity: '',
-      ticketPrice: '',
+    status: 'upcoming',
+    artists: [],
+    capacity: '',
+    ticketPrice: '',
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
@@ -127,6 +127,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
       // Note: We don't add existing images to FilePond
       // They will be shown separately below the FilePond component
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event]);
 
   const handleFilePondUpdate = (fileItems) => {
@@ -155,7 +156,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+    <form onSubmit={formik.handleSubmit} className="space-y-4 overflow-y-auto pr-2 py-2">
       <FormField
         label="Title"
         name="title"
@@ -248,9 +249,9 @@ function EventForm({ event = null, onSubmit, onCancel }) {
           styleButtonProcessItemPosition="right"
         />
         {formik.touched.image && formik.errors.image && (
-          <Typography variant="small" color="red" className="mt-1">
+          <p className="text-red-500 text-sm mt-1">
             {formik.errors.image}
-          </Typography>
+          </p>
         )}
         {event?.imageUrl?.url && !formik.values.image && (
           <div className="mt-2 relative inline-block">
@@ -259,9 +260,9 @@ function EventForm({ event = null, onSubmit, onCancel }) {
               alt="Current"
               className="h-32 w-auto rounded-lg border border-gray-300"
             />
-            <Typography variant="small" color="gray" className="mt-1">
+            <p className="text-sm text-gray-500 mt-1">
               Current image (upload new image to replace)
-            </Typography>
+            </p>
           </div>
         )}
       </div>
@@ -281,14 +282,14 @@ function EventForm({ event = null, onSubmit, onCancel }) {
       />
 
       <div className="mb-4">
-        <Typography variant="h6" className="mb-2">
+        <h3 className="text-xl font-medium text-gray-700 mb-2">
           Artists
-        </Typography>
-        <div className="max-h-40 overflow-y-auto border rounded p-2">
+        </h3>
+        <div className="max-h-40 overflow-y-auto border rounded-lg p-2">
           {artists.length === 0 ? (
-            <Typography variant="small" color="gray">
+            <p className="text-sm text-gray-500">
               No artists available
-            </Typography>
+            </p>
           ) : (
             artists.map((artist) => (
               <label key={artist._id} className="flex items-center gap-2 p-2 hover:bg-gray-50 cursor-pointer">
@@ -328,11 +329,22 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         />
       </div>
 
-      <div className="flex gap-2 justify-end mt-6 pt-4 border-t">
-        <Button type="button" variant="outlined" onClick={onCancel} disabled={formik.isSubmitting}>
+      <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6 pt-4 border-t border-gray-200">
+        <Button 
+          type="button" 
+          onClick={onCancel} 
+          disabled={formik.isSubmitting}
+          className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-full sm:w-auto order-2 sm:order-1"
+          aria-label="Cancel form"
+        >
           Cancel
         </Button>
-        <Button type="submit" color="blue" disabled={formik.isSubmitting}>
+        <Button 
+          type="submit" 
+          disabled={formik.isSubmitting}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto order-1 sm:order-2"
+          aria-label={formik.isSubmitting ? 'Saving event' : event ? 'Update event' : 'Create event'}
+        >
           {formik.isSubmitting ? 'Saving...' : event ? 'Update' : 'Create'} Event
         </Button>
       </div>

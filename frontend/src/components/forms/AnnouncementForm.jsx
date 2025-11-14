@@ -140,11 +140,20 @@ function AnnouncementForm({ announcement = null, onSubmit, onCancel }) {
         error={errors.expiresAt}
       />
 
-      <div className="flex gap-2 justify-end mt-6">
-        <Button type="button" variant="outlined" onClick={onCancel}>
+      <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6 pt-4 border-t border-gray-200">
+        <Button 
+          type="button" 
+          onClick={onCancel}
+          className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-full sm:w-auto order-2 sm:order-1"
+          aria-label="Cancel form"
+        >
           Cancel
         </Button>
-        <Button type="submit" color="blue">
+        <Button 
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto order-1 sm:order-2"
+          aria-label={announcement ? 'Update announcement' : 'Create announcement'}
+        >
           {announcement ? 'Update' : 'Create'} Announcement
         </Button>
       </div>

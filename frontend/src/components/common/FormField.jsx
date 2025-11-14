@@ -17,9 +17,13 @@ function FormField({
   rows = 4,
   ...props
 }) {
+  const fieldId = `field-${name}`;
+  const errorId = `error-${name}`;
+  
   const baseProps = {
     label: label + (required ? ' *' : ''),
     name,
+    id: fieldId,
     value: value || '',
     onChange,
     error: !!error,
@@ -59,7 +63,13 @@ function FormField({
     <div className="mb-4">
       {FieldComponent}
       {error && (
-        <Typography variant="small" color="red" className="mt-1">
+        <Typography 
+          variant="small" 
+          id={errorId}
+          className="text-red-500 text-sm mt-1"
+          role="alert"
+          aria-live="polite"
+        >
           {error}
         </Typography>
       )}
