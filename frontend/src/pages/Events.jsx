@@ -63,23 +63,8 @@ function Events() {
         await dispatch(updateEvent({ id: selectedEvent._id, data: formData })).unwrap();
         success('Event updated successfully');
       } else {
-        // Extract pending image file before creating event
-        const { _pendingImageFile, ...eventData } = formData;
-        const result = await dispatch(createEvent(eventData)).unwrap();
+        await dispatch(createEvent(formData)).unwrap();
         success('Event created successfully');
-        
-        // Upload image if one was selected
-        if (_pendingImageFile && result.data?._id) {
-          try {
-            const { uploadEventImage } = await import('../services/eventService');
-            await uploadEventImage(result.data._id, _pendingImageFile);
-            success('Image uploaded successfully');
-            // Refresh events list to show the new image
-            dispatch(fetchEvents());
-          } catch (imgErr) {
-            showError('Event created but image upload failed. You can upload it later.');
-          }
-        }
       }
       setIsModalOpen(false);
       setSelectedEvent(null);

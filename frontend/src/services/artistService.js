@@ -15,28 +15,20 @@ export const getArtist = async (id) => {
 };
 
 export const createArtist = async (artistData) => {
-  const response = await api.post('/artists', artistData);
-  return response.data;
-};
-
-export const updateArtist = async (id, artistData) => {
-  const response = await api.put(`/artists/${id}`, artistData);
-  return response.data;
-};
-
-export const deleteArtist = async (id) => {
-  const response = await api.delete(`/artists/${id}`);
-  return response.data;
-};
-
-/**
- * Upload image for artist
- */
-export const uploadArtistImage = async (id, imageFile) => {
   const formData = new FormData();
-  formData.append('image', imageFile);
   
-  const response = await api.post(`/artists/${id}/image`, formData, {
+  // Append all fields to FormData
+  Object.keys(artistData).forEach((key) => {
+    if (key === 'image' && artistData[key] instanceof File) {
+      formData.append('image', artistData[key]);
+    } else if (key === 'socialMedia') {
+      formData.append(key, JSON.stringify(artistData[key]));
+    } else if (artistData[key] !== null && artistData[key] !== undefined && artistData[key] !== '') {
+      formData.append(key, artistData[key]);
+    }
+  });
+
+  const response = await api.post('/artists', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -44,19 +36,30 @@ export const uploadArtistImage = async (id, imageFile) => {
   return response.data;
 };
 
-/**
- * Get artist image
- */
-export const getArtistImage = async (id) => {
-  const response = await api.get(`/artists/${id}/image`);
+export const updateArtist = async (id, artistData) => {
+  const formData = new FormData();
+  
+  // Append all fields to FormData
+  Object.keys(artistData).forEach((key) => {
+    if (key === 'image' && artistData[key] instanceof File) {
+      formData.append('image', artistData[key]);
+    } else if (key === 'socialMedia') {
+      formData.append(key, JSON.stringify(artistData[key]));
+    } else if (artistData[key] !== null && artistData[key] !== undefined && artistData[key] !== '') {
+      formData.append(key, artistData[key]);
+    }
+  });
+
+  const response = await api.put(`/artists/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return response.data;
 };
 
-/**
- * Delete artist image
- */
-export const deleteArtistImage = async (id) => {
-  const response = await api.delete(`/artists/${id}/image`);
+export const deleteArtist = async (id) => {
+  const response = await api.delete(`/artists/${id}`);
   return response.data;
 };
 

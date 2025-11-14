@@ -1,15 +1,12 @@
-import { useState } from 'react';
 import { Card, CardBody, Typography, Chip, Button, Avatar } from '@material-tailwind/react';
-import { PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { formatDate, formatDateTime } from '../../../utils/formatters';
-import ImagePreviewModal from '../../common/ImagePreviewModal';
 
 /**
  * Event Card component
  * Displays event information in a card format
  */
 function EventCard({ event, onEdit, onDelete }) {
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const statusColorMap = {
     upcoming: 'blue',
     ongoing: 'green',
@@ -18,30 +15,15 @@ function EventCard({ event, onEdit, onDelete }) {
   };
 
   return (
-    <>
-      <Card className="shadow-md hover:shadow-lg transition-shadow">
-        <CardBody className="p-6">
-          {event.imageUrl && (
-            <div className="relative group mb-4">
-              <img
-                src={event.imageUrl}
-                alt={event.title}
-                className="w-full h-48 object-cover rounded-lg cursor-pointer transition-opacity hover:opacity-90"
-                onClick={() => setIsPreviewOpen(true)}
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
-                <Button
-                  size="sm"
-                  variant="text"
-                  color="white"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => setIsPreviewOpen(true)}
-                >
-                  <EyeIcon className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-          )}
+    <Card className="shadow-md hover:shadow-lg transition-shadow">
+      <CardBody className="p-6">
+        {event.imageUrl?.url && (
+          <img
+            src={event.imageUrl.url}
+            alt={event.title}
+            className="w-full h-48 object-cover rounded-lg mb-4"
+          />
+        )}
         <div className="flex items-start justify-between mb-2">
           <Typography variant="h5" color="blue-gray">
             {event.title}
@@ -76,7 +58,7 @@ function EventCard({ event, onEdit, onDelete }) {
               {event.artists.slice(0, 3).map((artist) => (
                 <Avatar
                   key={artist._id}
-                  src={artist.imageUrl}
+                  src={artist.imageUrl?.url || artist.imageUrl}
                   alt={artist.name}
                   size="sm"
                   variant="circular"
@@ -118,13 +100,6 @@ function EventCard({ event, onEdit, onDelete }) {
         </div>
       </CardBody>
     </Card>
-    <ImagePreviewModal
-      open={isPreviewOpen}
-      onClose={() => setIsPreviewOpen(false)}
-      imageUrl={event.imageUrl}
-      title={event.title}
-    />
-    </>
   );
 }
 

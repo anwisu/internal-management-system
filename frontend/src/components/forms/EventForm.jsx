@@ -1,36 +1,106 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Typography, Button } from '@material-tailwind/react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { FilePond, registerPlugin } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FormField from '../common/FormField';
-import ImageUpload from '../common/ImageUpload';
 import { STATUS_OPTIONS } from '../../utils/constants';
-import { isValidUrl } from '../../utils/validation';
 import * as artistService from '../../services/artistService';
 import { useApi } from '../../hooks/useApi';
 
+// Register FilePond plugins
+registerPlugin(
+  FilePondPluginImagePreview,
+  FilePondPluginFileValidateType,
+  FilePondPluginFileValidateSize
+);
+
+/**
+ * Validation schema for Event form
+ */
+const validationSchema = Yup.object().shape({
+  title: Yup.string()
+    .required('Title is required')
+    .trim()
+    .min(2, 'Title must be at least 2 characters'),
+  description: Yup.string().trim(),
+  venue: Yup.string()
+    .required('Venue is required')
+    .trim()
+    .min(2, 'Venue must be at least 2 characters'),
+  location: Yup.string().trim(),
+  startDate: Yup.date()
+    .required('Start date is required')
+    .typeError('Invalid date format'),
+  endDate: Yup.date()
+    .nullable()
+    .when('startDate', {
+      is: (startDate) => startDate,
+      then: (schema) =>
+        schema.min(Yup.ref('startDate'), 'End date must be after start date'),
+      otherwise: (schema) => schema,
+    })
+    .typeError('Invalid date format'),
+  status: Yup.string()
+    .oneOf(['upcoming', 'ongoing', 'completed', 'cancelled'], 'Invalid status')
+    .required('Status is required'),
+  capacity: Yup.number()
+    .nullable()
+    .min(0, 'Capacity must be a positive number')
+    .typeError('Capacity must be a number'),
+  ticketPrice: Yup.number()
+    .nullable()
+    .min(0, 'Ticket price must be a positive number')
+    .typeError('Ticket price must be a number'),
+  artists: Yup.array().of(Yup.string()),
+});
+
 /**
  * Event Form component
- * Handles creating and editing events
+ * Handles creating and editing events with image upload
  */
 function EventForm({ event = null, onSubmit, onCancel }) {
   const { data: artistsData } = useApi(() => artistService.getArtists({ status: 'active' }));
   const artists = artistsData?.data || [];
+  const pondRef = useRef(null);
 
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    venue: '',
-    location: '',
-    startDate: '',
-    endDate: '',
-    imageUrl: '',
-    status: 'upcoming',
-    artists: [],
-    capacity: '',
-    ticketPrice: '',
+  const formik = useFormik({
+    initialValues: {
+      title: '',
+      description: '',
+      venue: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      image: null,
+      status: 'upcoming',
+      artists: [],
+      capacity: '',
+      ticketPrice: '',
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const submitData = {
+          ...values,
+          capacity: values.capacity ? parseInt(values.capacity, 10) : 0,
+          ticketPrice: values.ticketPrice ? parseFloat(values.ticketPrice) : 0,
+          startDate: new Date(values.startDate),
+          endDate: values.endDate ? new Date(values.endDate) : undefined,
+        };
+        await onSubmit(submitData);
+      } catch (error) {
+        console.error('Form submission error:', error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
   });
-
-  const [errors, setErrors] = useState({});
-  const [pendingImageFile, setPendingImageFile] = useState(null);
 
   useEffect(() => {
     if (event) {
@@ -40,100 +110,59 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         return d.toISOString().slice(0, 16);
       };
 
-      setFormData({
+      formik.setValues({
         title: event.title || '',
         description: event.description || '',
         venue: event.venue || '',
         location: event.location || '',
         startDate: formatDateForInput(event.startDate),
         endDate: formatDateForInput(event.endDate),
-        imageUrl: event.imageUrl || '',
+        image: null,
         status: event.status || 'upcoming',
         artists: event.artists?.map((a) => (typeof a === 'object' ? a._id : a)) || [],
         capacity: event.capacity?.toString() || '',
         ticketPrice: event.ticketPrice?.toString() || '',
       });
+
+      // Note: We don't add existing images to FilePond
+      // They will be shown separately below the FilePond component
     }
   }, [event]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+  const handleFilePondUpdate = (fileItems) => {
+    if (fileItems.length > 0) {
+      const fileItem = fileItems[0];
+      // Only set File objects (new uploads)
+      if (fileItem.file instanceof File) {
+        formik.setFieldValue('image', fileItem.file);
+        formik.setFieldTouched('image', true);
+      }
+    } else {
+      formik.setFieldValue('image', null);
     }
+  };
+
+  const handleFilePondRemove = () => {
+    formik.setFieldValue('image', null);
   };
 
   const handleArtistChange = (artistId) => {
-    setFormData((prev) => ({
-      ...prev,
-      artists: prev.artists.includes(artistId)
-        ? prev.artists.filter((id) => id !== artistId)
-        : [...prev.artists, artistId],
-    }));
-  };
-
-  const validate = () => {
-    const newErrors = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
-    }
-
-    if (!formData.venue.trim()) {
-      newErrors.venue = 'Venue is required';
-    }
-
-    if (!formData.startDate) {
-      newErrors.startDate = 'Start date is required';
-    }
-
-    if (formData.endDate && new Date(formData.endDate) < new Date(formData.startDate)) {
-      newErrors.endDate = 'End date must be after start date';
-    }
-
-    if (formData.imageUrl && !isValidUrl(formData.imageUrl)) {
-      newErrors.imageUrl = 'Invalid URL format';
-    }
-
-    if (formData.capacity && (isNaN(formData.capacity) || formData.capacity < 0)) {
-      newErrors.capacity = 'Capacity must be a positive number';
-    }
-
-    if (formData.ticketPrice && (isNaN(formData.ticketPrice) || formData.ticketPrice < 0)) {
-      newErrors.ticketPrice = 'Ticket price must be a positive number';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      const submitData = {
-        ...formData,
-        capacity: formData.capacity ? parseInt(formData.capacity) : 0,
-        ticketPrice: formData.ticketPrice ? parseFloat(formData.ticketPrice) : 0,
-        startDate: new Date(formData.startDate),
-        endDate: formData.endDate ? new Date(formData.endDate) : undefined,
-        _pendingImageFile: pendingImageFile,
-      };
-      onSubmit(submitData);
-    }
+    const currentArtists = formik.values.artists;
+    const newArtists = currentArtists.includes(artistId)
+      ? currentArtists.filter((id) => id !== artistId)
+      : [...currentArtists, artistId];
+    formik.setFieldValue('artists', newArtists);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={formik.handleSubmit} className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
       <FormField
         label="Title"
         name="title"
-        value={formData.title}
-        onChange={handleChange}
-        error={errors.title}
+        value={formik.values.title}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.title && formik.errors.title}
         required
       />
 
@@ -141,37 +170,41 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         label="Description"
         name="description"
         type="textarea"
-        value={formData.description}
-        onChange={handleChange}
-        error={errors.description}
+        value={formik.values.description}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.description && formik.errors.description}
         rows={4}
       />
 
       <FormField
         label="Venue"
         name="venue"
-        value={formData.venue}
-        onChange={handleChange}
-        error={errors.venue}
+        value={formik.values.venue}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.venue && formik.errors.venue}
         required
       />
 
       <FormField
         label="Location"
         name="location"
-        value={formData.location}
-        onChange={handleChange}
-        error={errors.location}
+        value={formik.values.location}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.location && formik.errors.location}
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
           label="Start Date & Time"
           name="startDate"
           type="datetime-local"
-          value={formData.startDate}
-          onChange={handleChange}
-          error={errors.startDate}
+          value={formik.values.startDate}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.startDate && formik.errors.startDate}
           required
         />
 
@@ -179,58 +212,56 @@ function EventForm({ event = null, onSubmit, onCancel }) {
           label="End Date & Time"
           name="endDate"
           type="datetime-local"
-          value={formData.endDate}
-          onChange={handleChange}
-          error={errors.endDate}
+          value={formik.values.endDate}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.endDate && formik.errors.endDate}
         />
       </div>
 
-      <div>
-        {event?._id ? (
-          <ImageUpload
-            entityId={event._id}
-            entityType="event"
-            currentImageUrl={formData.imageUrl}
-            onUploadSuccess={(imageUrl, updatedEvent) => {
-              setFormData((prev) => ({ ...prev, imageUrl }));
-            }}
-            onDeleteSuccess={(updatedEvent) => {
-              setFormData((prev) => ({ ...prev, imageUrl: '' }));
-            }}
-          />
-        ) : (
-          <div>
-            <ImageUpload
-              entityId={null}
-              entityType="event"
-              currentImageUrl={formData.imageUrl}
-              onUploadSuccess={(imageUrl, file) => {
-                // Store the file for upload after event creation
-                // FilePond file object has a .file property containing the actual File
-                if (file && file.file instanceof File) {
-                  setPendingImageFile(file.file);
-                } else if (imageUrl) {
-                  setFormData((prev) => ({ ...prev, imageUrl }));
-                }
-              }}
-              onDeleteSuccess={() => {
-                setFormData((prev) => ({ ...prev, imageUrl: '' }));
-                setPendingImageFile(null);
-              }}
-              disabled={false}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Image
+        </label>
+        <FilePond
+          ref={pondRef}
+          files={formik.values.image instanceof File ? [formik.values.image] : []}
+          onupdatefiles={handleFilePondUpdate}
+          onremovefile={handleFilePondRemove}
+          allowMultiple={false}
+          maxFiles={1}
+          acceptedFileTypes={['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']}
+          maxFileSize="5MB"
+          labelIdle='<span class="filepond--label-action">Browse</span> or drag & drop your image here'
+          labelFileTypeNotAllowed="Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."
+          labelFileSizeTooBig="File is too large. Maximum size is 5MB."
+          labelFileProcessing="Uploading..."
+          labelFileProcessingComplete="Upload complete"
+          labelFileProcessingError="Error during upload"
+          labelTapToCancel="Tap to cancel"
+          labelTapToRetry="Tap to retry"
+          labelTapToUndo="Tap to undo"
+          server={null}
+          instantUpload={false}
+          stylePanelLayout="integrated"
+          styleButtonRemoveItemPosition="left"
+          styleButtonProcessItemPosition="right"
+        />
+        {formik.touched.image && formik.errors.image && (
+          <Typography variant="small" color="red" className="mt-1">
+            {formik.errors.image}
+          </Typography>
+        )}
+        {event?.imageUrl?.url && !formik.values.image && (
+          <div className="mt-2 relative inline-block">
+            <img
+              src={event.imageUrl.url}
+              alt="Current"
+              className="h-32 w-auto rounded-lg border border-gray-300"
             />
-            <Typography variant="small" color="gray" className="mt-2 italic">
-              Note: Image will be uploaded automatically after the event is created. You can also enter an image URL below.
+            <Typography variant="small" color="gray" className="mt-1">
+              Current image (upload new image to replace)
             </Typography>
-            <FormField
-              label="Or enter Image URL"
-              name="imageUrl"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              error={errors.imageUrl}
-              placeholder="https://example.com/image.jpg"
-              className="mt-2"
-            />
           </div>
         )}
       </div>
@@ -239,9 +270,10 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         label="Status"
         name="status"
         type="select"
-        value={formData.status}
-        onChange={handleChange}
-        error={errors.status}
+        value={formik.values.status}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.status && formik.errors.status}
         options={STATUS_OPTIONS.EVENT.map((status) => ({
           value: status,
           label: status.charAt(0).toUpperCase() + status.slice(1),
@@ -259,10 +291,10 @@ function EventForm({ event = null, onSubmit, onCancel }) {
             </Typography>
           ) : (
             artists.map((artist) => (
-              <label key={artist._id} className="flex items-center gap-2 p-2 hover:bg-gray-50">
+              <label key={artist._id} className="flex items-center gap-2 p-2 hover:bg-gray-50 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={formData.artists.includes(artist._id)}
+                  checked={formik.values.artists.includes(artist._id)}
                   onChange={() => handleArtistChange(artist._id)}
                   className="rounded"
                 />
@@ -273,33 +305,35 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
           label="Capacity"
           name="capacity"
           type="number"
-          value={formData.capacity}
-          onChange={handleChange}
-          error={errors.capacity}
+          value={formik.values.capacity}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.capacity && formik.errors.capacity}
         />
 
         <FormField
           label="Ticket Price"
           name="ticketPrice"
           type="number"
-          value={formData.ticketPrice}
-          onChange={handleChange}
-          error={errors.ticketPrice}
+          value={formik.values.ticketPrice}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.ticketPrice && formik.errors.ticketPrice}
           step="0.01"
         />
       </div>
 
-      <div className="flex gap-2 justify-end mt-6">
-        <Button type="button" variant="outlined" onClick={onCancel}>
+      <div className="flex gap-2 justify-end mt-6 pt-4 border-t">
+        <Button type="button" variant="outlined" onClick={onCancel} disabled={formik.isSubmitting}>
           Cancel
         </Button>
-        <Button type="submit" color="blue">
-          {event ? 'Update' : 'Create'} Event
+        <Button type="submit" color="blue" disabled={formik.isSubmitting}>
+          {formik.isSubmitting ? 'Saving...' : event ? 'Update' : 'Create'} Event
         </Button>
       </div>
     </form>
@@ -307,4 +341,3 @@ function EventForm({ event = null, onSubmit, onCancel }) {
 }
 
 export default EventForm;
-

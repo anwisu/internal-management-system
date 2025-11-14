@@ -1,14 +1,11 @@
-import { useState } from 'react';
 import { Card, CardBody, Typography, Chip, Button } from '@material-tailwind/react';
-import { PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
-import ImagePreviewModal from '../../common/ImagePreviewModal';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 /**
  * Artist Card component
  * Displays artist information in a card format
  */
 function ArtistCard({ artist, onEdit, onDelete }) {
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const statusColorMap = {
     active: 'green',
     inactive: 'gray',
@@ -16,30 +13,15 @@ function ArtistCard({ artist, onEdit, onDelete }) {
   };
 
   return (
-    <>
-      <Card className="shadow-md hover:shadow-lg transition-shadow">
-        <CardBody className="p-6">
-          {artist.imageUrl && (
-            <div className="relative group mb-4">
-              <img
-                src={artist.imageUrl}
-                alt={artist.name}
-                className="w-full h-48 object-cover rounded-lg cursor-pointer transition-opacity hover:opacity-90"
-                onClick={() => setIsPreviewOpen(true)}
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
-                <Button
-                  size="sm"
-                  variant="text"
-                  color="white"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => setIsPreviewOpen(true)}
-                >
-                  <EyeIcon className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-          )}
+    <Card className="shadow-md hover:shadow-lg transition-shadow">
+      <CardBody className="p-6">
+        {artist.imageUrl?.url && (
+          <img
+            src={artist.imageUrl.url}
+            alt={artist.name}
+            className="w-full h-48 object-cover rounded-lg mb-4"
+          />
+        )}
         <div className="flex items-start justify-between mb-2">
           <Typography variant="h5" color="blue-gray">
             {artist.name}
@@ -84,13 +66,6 @@ function ArtistCard({ artist, onEdit, onDelete }) {
         </div>
       </CardBody>
     </Card>
-    <ImagePreviewModal
-      open={isPreviewOpen}
-      onClose={() => setIsPreviewOpen(false)}
-      imageUrl={artist.imageUrl}
-      title={artist.name}
-    />
-    </>
   );
 }
 

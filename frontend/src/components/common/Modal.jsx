@@ -15,7 +15,9 @@ function Modal({ open, onClose, title, children, footer, size = 'md' }) {
   return (
     <Dialog open={open} handler={onClose} size={sizeMap[size]}>
       {title && <DialogHeader>{title}</DialogHeader>}
-      <DialogBody>{children}</DialogBody>
+      <DialogBody className="overflow-y-auto max-h-[calc(100vh-200px)]">
+        {children}
+      </DialogBody>
       {footer && <DialogFooter>{footer}</DialogFooter>}
     </Dialog>
   );
