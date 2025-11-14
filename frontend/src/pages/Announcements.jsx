@@ -133,7 +133,7 @@ function Announcements() {
             icon={
               <FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />
             }
-            className="pr-8 rounded-2xl bg-white/80 border border-slate-200 focus:border-primary-500 focus:ring-primary-100 shadow-glass"
+            className="pr-8 rounded-2xl bg-white/80 border border-slate-200 shadow-glass"
             autoFocus={false}
             aria-label="Search announcements by title or content"
           />
