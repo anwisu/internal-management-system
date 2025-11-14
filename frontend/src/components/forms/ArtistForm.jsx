@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Typography, Button } from '@material-tailwind/react';
 import FormField from '../common/FormField';
+import ImageUpload from '../common/ImageUpload';
 import { STATUS_OPTIONS } from '../../utils/constants';
 import { isValidEmail, isValidUrl, isValidPhone } from '../../utils/validation';
 
@@ -25,6 +26,7 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [pendingImageFile, setPendingImageFile] = useState(null);
 
   useEffect(() => {
     if (artist) {
@@ -103,12 +105,15 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit(formData);
+      // Store pending image file if exists
+      const submitData = { ...formData, _pendingImageFile: pendingImageFile };
+      onSubmit(submitData);
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -131,14 +136,55 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
         rows={4}
       />
 
-      <FormField
-        label="Image URL"
-        name="imageUrl"
-        value={formData.imageUrl}
-        onChange={handleChange}
-        error={errors.imageUrl}
-        placeholder="https://example.com/image.jpg"
-      />
+      <div>
+        {artist?._id ? (
+          <ImageUpload
+            entityId={artist._id}
+            entityType="artist"
+            currentImageUrl={formData.imageUrl}
+            onUploadSuccess={(imageUrl, updatedArtist) => {
+              setFormData((prev) => ({ ...prev, imageUrl }));
+            }}
+            onDeleteSuccess={(updatedArtist) => {
+              setFormData((prev) => ({ ...prev, imageUrl: '' }));
+            }}
+          />
+        ) : (
+          <div>
+            <ImageUpload
+              entityId={null}
+              entityType="artist"
+              currentImageUrl={formData.imageUrl}
+              onUploadSuccess={(imageUrl, file) => {
+                // Store the file for upload after artist creation
+                // FilePond file object has a .file property containing the actual File
+                if (file && file.file instanceof File) {
+                  setPendingImageFile(file.file);
+                } else if (imageUrl) {
+                  setFormData((prev) => ({ ...prev, imageUrl }));
+                }
+              }}
+              onDeleteSuccess={() => {
+                setFormData((prev) => ({ ...prev, imageUrl: '' }));
+                setPendingImageFile(null);
+              }}
+              disabled={false}
+            />
+            <Typography variant="small" color="gray" className="mt-2 italic">
+              Note: Image will be uploaded automatically after the artist is created. You can also enter an image URL below.
+            </Typography>
+            <FormField
+              label="Or enter Image URL"
+              name="imageUrl"
+              value={formData.imageUrl}
+              onChange={handleChange}
+              error={errors.imageUrl}
+              placeholder="https://example.com/image.jpg"
+              className="mt-2"
+            />
+          </div>
+        )}
+      </div>
 
       <FormField
         label="Genre"

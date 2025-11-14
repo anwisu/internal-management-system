@@ -62,8 +62,23 @@ function Artists() {
         await dispatch(updateArtist({ id: selectedArtist._id, data: formData })).unwrap();
         success('Artist updated successfully');
       } else {
-        await dispatch(createArtist(formData)).unwrap();
+        // Extract pending image file before creating artist
+        const { _pendingImageFile, ...artistData } = formData;
+        const result = await dispatch(createArtist(artistData)).unwrap();
         success('Artist created successfully');
+        
+        // Upload image if one was selected
+        if (_pendingImageFile && result.data?._id) {
+          try {
+            const { uploadArtistImage } = await import('../services/artistService');
+            await uploadArtistImage(result.data._id, _pendingImageFile);
+            success('Image uploaded successfully');
+            // Refresh artists list to show the new image
+            dispatch(fetchArtists());
+          } catch (imgErr) {
+            showError('Artist created but image upload failed. You can upload it later.');
+          }
+        }
       }
       setIsModalOpen(false);
       setSelectedArtist(null);

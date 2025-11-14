@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Typography, Button } from '@material-tailwind/react';
 import FormField from '../common/FormField';
+import ImageUpload from '../common/ImageUpload';
 import { STATUS_OPTIONS } from '../../utils/constants';
 import { isValidUrl } from '../../utils/validation';
 import * as artistService from '../../services/artistService';
@@ -29,6 +30,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [pendingImageFile, setPendingImageFile] = useState(null);
 
   useEffect(() => {
     if (event) {
@@ -118,6 +120,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         ticketPrice: formData.ticketPrice ? parseFloat(formData.ticketPrice) : 0,
         startDate: new Date(formData.startDate),
         endDate: formData.endDate ? new Date(formData.endDate) : undefined,
+        _pendingImageFile: pendingImageFile,
       };
       onSubmit(submitData);
     }
@@ -182,14 +185,55 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         />
       </div>
 
-      <FormField
-        label="Image URL"
-        name="imageUrl"
-        value={formData.imageUrl}
-        onChange={handleChange}
-        error={errors.imageUrl}
-        placeholder="https://example.com/image.jpg"
-      />
+      <div>
+        {event?._id ? (
+          <ImageUpload
+            entityId={event._id}
+            entityType="event"
+            currentImageUrl={formData.imageUrl}
+            onUploadSuccess={(imageUrl, updatedEvent) => {
+              setFormData((prev) => ({ ...prev, imageUrl }));
+            }}
+            onDeleteSuccess={(updatedEvent) => {
+              setFormData((prev) => ({ ...prev, imageUrl: '' }));
+            }}
+          />
+        ) : (
+          <div>
+            <ImageUpload
+              entityId={null}
+              entityType="event"
+              currentImageUrl={formData.imageUrl}
+              onUploadSuccess={(imageUrl, file) => {
+                // Store the file for upload after event creation
+                // FilePond file object has a .file property containing the actual File
+                if (file && file.file instanceof File) {
+                  setPendingImageFile(file.file);
+                } else if (imageUrl) {
+                  setFormData((prev) => ({ ...prev, imageUrl }));
+                }
+              }}
+              onDeleteSuccess={() => {
+                setFormData((prev) => ({ ...prev, imageUrl: '' }));
+                setPendingImageFile(null);
+              }}
+              disabled={false}
+            />
+            <Typography variant="small" color="gray" className="mt-2 italic">
+              Note: Image will be uploaded automatically after the event is created. You can also enter an image URL below.
+            </Typography>
+            <FormField
+              label="Or enter Image URL"
+              name="imageUrl"
+              value={formData.imageUrl}
+              onChange={handleChange}
+              error={errors.imageUrl}
+              placeholder="https://example.com/image.jpg"
+              className="mt-2"
+            />
+          </div>
+        )}
+      </div>
 
       <FormField
         label="Status"

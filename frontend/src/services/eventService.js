@@ -34,3 +34,34 @@ export const getUpcomingEvents = async () => {
   return response.data;
 };
 
+/**
+ * Upload image for event
+ */
+export const uploadEventImage = async (id, imageFile) => {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  
+  const response = await api.post(`/events/${id}/image`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+/**
+ * Get event image
+ */
+export const getEventImage = async (id) => {
+  const response = await api.get(`/events/${id}/image`);
+  return response.data;
+};
+
+/**
+ * Delete event image
+ */
+export const deleteEventImage = async (id) => {
+  const response = await api.delete(`/events/${id}/image`);
+  return response.data;
+};
+

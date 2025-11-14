@@ -29,3 +29,34 @@ export const deleteArtist = async (id) => {
   return response.data;
 };
 
+/**
+ * Upload image for artist
+ */
+export const uploadArtistImage = async (id, imageFile) => {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  
+  const response = await api.post(`/artists/${id}/image`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+/**
+ * Get artist image
+ */
+export const getArtistImage = async (id) => {
+  const response = await api.get(`/artists/${id}/image`);
+  return response.data;
+};
+
+/**
+ * Delete artist image
+ */
+export const deleteArtistImage = async (id) => {
+  const response = await api.delete(`/artists/${id}/image`);
+  return response.data;
+};
+
