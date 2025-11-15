@@ -22,7 +22,12 @@ export default defineConfig(({ mode }) => {
       port: Number(process.env.PORT) || Number(env.PORT) || 3000,
       host: '0.0.0.0',
       strictPort: true,
+      cors: true,
     },
+    build: {
+      outDir: 'dist',
+    },
+    publicDir: 'public',
   };
 });
 
