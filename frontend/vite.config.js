@@ -18,8 +18,10 @@ export default defineConfig(({ mode }) => {
       },
     },
     preview: {
-      port: Number(env.PORT) || 3000,
-      host: true,
+      // eslint-disable-next-line no-undef
+      port: Number(process.env.PORT) || Number(env.PORT) || 3000,
+      host: '0.0.0.0',
+      strictPort: true,
     },
   };
 });
