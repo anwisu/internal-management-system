@@ -9,9 +9,10 @@ import {
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EventCard from '../components/features/events/EventCard';
 import AnnouncementCard from '../components/features/announcements/AnnouncementCard';
+import EmptyState from '../components/common/EmptyState';
 import { Link } from 'react-router-dom';
 import { Button } from '@material-tailwind/react';
-import { FiActivity, FiCalendar, FiBell } from 'react-icons/fi';
+import { FiActivity, FiCalendar, FiBell, FiAlertCircle } from 'react-icons/fi';
 
 /**
  * Dashboard page component
@@ -156,11 +157,11 @@ function Dashboard() {
           </Link>
         </div>
         {!upcomingEvents || upcomingEvents.length === 0 ? (
-          <Card className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-blue-gray-500">
-            <CardBody className="p-0">
-              Nothing on the horizon just yet. Plan your next event!
-            </CardBody>
-          </Card>
+          <EmptyState
+            icon={FiCalendar}
+            message="Nothing on the horizon just yet."
+            actionLabel="Plan your next event!"
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {upcomingEvents.slice(0, 3).map((event) => (
@@ -171,8 +172,7 @@ function Dashboard() {
                 >
                   <EventCard
                     event={event}
-                    onEdit={() => {}}
-                    onDelete={() => {}}
+                    hideActions={true}
                   />
                 </Link>
               </div>
@@ -206,11 +206,11 @@ function Dashboard() {
           </Link>
         </div>
         {!activeAnnouncements || activeAnnouncements.length === 0 ? (
-          <Card className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-8 text-center text-blue-gray-500">
-            <CardBody className="p-0">
-              No active announcements. Share an update to keep the team aligned.
-            </CardBody>
-          </Card>
+          <EmptyState
+            icon={FiBell}
+            message="No active announcements."
+            actionLabel="Share an update to keep the team aligned."
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {activeAnnouncements.slice(0, 3).map((announcement) => (
@@ -221,8 +221,7 @@ function Dashboard() {
                 >
                   <AnnouncementCard
                     announcement={announcement}
-                    onEdit={() => {}}
-                    onDelete={() => {}}
+                    hideActions={true}
                   />
                 </Link>
               </div>

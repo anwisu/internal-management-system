@@ -40,11 +40,15 @@ The application is deployed as two separate Railway services:
 
 1. In your Railway project, click "New" → "GitHub Repo"
 2. Select the same repository
-3. Railway will detect the service automatically
-4. Click on the service to configure it:
-   - **Root Directory**: Set to `backend`
-   - **Build Command**: `npm install` (handled by railway.json)
-   - **Start Command**: `npm start` (handled by railway.json)
+3. **IMPORTANT**: Railway may show an error about not detecting the app type - this is normal for monorepos
+4. Click on the newly created service to open its settings
+5. Go to **Settings** → **Service** (or click the service name)
+6. Scroll down to **Root Directory** section
+7. Set **Root Directory** to `backend` (without quotes, just `backend`)
+8. Railway will automatically detect it's a Node.js project and use the `backend/railway.json` configuration
+9. The build and start commands are handled by `backend/railway.json`:
+   - **Build Command**: `npm install` (auto-detected from railway.json)
+   - **Start Command**: `npm start` (auto-detected from railway.json)
 
 ### 4. Configure Backend Environment Variables
 
@@ -69,10 +73,15 @@ FRONTEND_URL=<your-frontend-railway-url>
 
 1. In your Railway project, click "New" → "GitHub Repo"
 2. Select the same repository again
-3. Click on the new service to configure it:
-   - **Root Directory**: Set to `frontend`
-   - **Build Command**: `npm install && npm run build` (handled by railway.json)
-   - **Start Command**: `npm run preview` (handled by railway.json)
+3. **IMPORTANT**: Railway may show an error about not detecting the app type - this is normal for monorepos
+4. Click on the newly created service to open its settings
+5. Go to **Settings** → **Service** (or click the service name)
+6. Scroll down to **Root Directory** section
+7. Set **Root Directory** to `frontend` (without quotes, just `frontend`)
+8. Railway will automatically detect it's a Node.js project and use the `frontend/railway.json` configuration
+9. The build and start commands are handled by `frontend/railway.json`:
+   - **Build Command**: `npm install && npm run build` (auto-detected from railway.json)
+   - **Start Command**: `npm run preview` (auto-detected from railway.json)
 
 ### 6. Configure Frontend Environment Variables
 
@@ -140,6 +149,23 @@ Expected response:
 Visit your frontend service URL. The application should load and connect to the backend API.
 
 ## Troubleshooting
+
+### Common Initial Setup Issues
+
+1. **"Railpack could not determine how to build the app" Error**
+   - This error appears when Railway first scans your repository
+   - **Solution**: Set the **Root Directory** in the service settings:
+     1. Click on your service
+     2. Go to **Settings** → **Service**
+     3. Find **Root Directory** field
+     4. Enter `backend` for backend service or `frontend` for frontend service
+     5. Save and redeploy
+   - After setting the root directory, Railway will detect the Node.js project and use the `railway.json` configuration
+
+2. **Service Not Detecting Node.js**
+   - Ensure the Root Directory is set correctly
+   - Verify that `package.json` exists in the specified root directory
+   - Check that `railway.json` exists in the service's root directory (`backend/railway.json` or `frontend/railway.json`)
 
 ### Backend Issues
 

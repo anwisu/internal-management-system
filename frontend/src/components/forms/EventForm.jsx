@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Button } from '@material-tailwind/react';
+import { Button, Spinner } from '@material-tailwind/react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FilePond, registerPlugin } from 'react-filepond';
@@ -71,17 +71,17 @@ function EventForm({ event = null, onSubmit, onCancel }) {
 
   const formik = useFormik({
     initialValues: {
-    title: '',
-    description: '',
-    venue: '',
-    location: '',
-    startDate: '',
-    endDate: '',
+      title: '',
+      description: '',
+      venue: '',
+      location: '',
+      startDate: '',
+      endDate: '',
       image: null,
-    status: 'upcoming',
-    artists: [],
-    capacity: '',
-    ticketPrice: '',
+      status: 'upcoming',
+      artists: [],
+      capacity: '',
+      ticketPrice: '',
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
@@ -156,7 +156,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
   };
 
   return (
-    <form onSubmit={formik.handleSubmit} className="space-y-4 overflow-y-auto pr-2 py-2">
+    <form onSubmit={formik.handleSubmit} className="space-y-4">
       <FormField
         label="Title"
         name="title"
@@ -329,23 +329,30 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6 pt-4 border-t border-gray-200">
-        <Button 
-          type="button" 
-          onClick={onCancel} 
+      <div className="flex flex-col sm:flex-row gap-4 justify-end mt-6 pt-4 border-t border-slate-100">
+        <Button
+          type="button"
+          onClick={onCancel}
           disabled={formik.isSubmitting}
-          className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 w-full sm:w-auto order-2 sm:order-1"
+          className="bg-slate-100 text-slate-700 px-5 py-2.5 rounded-full hover:bg-slate-200 shadow-sm hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 w-full sm:w-auto order-2 sm:order-1"
           aria-label="Cancel form"
         >
           Cancel
         </Button>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={formik.isSubmitting}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto order-1 sm:order-2"
+          className="bg-primary-600 text-white px-6 py-2.5 rounded-full hover:bg-primary-700 shadow-soft-lg hover:shadow-soft-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 w-full sm:w-auto order-1 sm:order-2 flex items-center justify-center gap-2 min-w-[140px]"
           aria-label={formik.isSubmitting ? 'Saving event' : event ? 'Update event' : 'Create event'}
         >
-          {formik.isSubmitting ? 'Saving...' : event ? 'Update' : 'Create'} Event
+          {formik.isSubmitting ? (
+            <>
+              <Spinner className="h-4 w-4" aria-hidden="true" />
+              <span>Saving...</span>
+            </>
+          ) : (
+            <span>{event ? 'Update' : 'Create'} Event</span>
+          )}
         </Button>
       </div>
     </form>
