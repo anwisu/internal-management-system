@@ -109,13 +109,13 @@ function Artists() {
         <Chip value="Artists hub" className="w-fit bg-primary-50 text-primary-700 font-semibold" />
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-bold text-blue-gray-900 flex items-center gap-3">
-              <span className="p-2 rounded-2xl bg-primary-100 text-primary-600">
+            <h1 className="text-3xl sm:text-4xl font-bold text-blue-gray-900 dark:text-white flex items-center gap-3">
+              <span className="p-2 rounded-2xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
                 <FiUsers className="w-5 h-5" aria-hidden="true" />
               </span>
               Artist directory
             </h1>
-            <p className="text-base text-blue-gray-500 max-w-2xl">
+            <p className="text-base text-blue-gray-500 dark:text-blue-gray-300 max-w-2xl">
               Curate individual profiles, manage contact channels, and highlight social presence in one elegant list.
             </p>
           </div>
@@ -143,7 +143,7 @@ function Artists() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               icon={<FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />}
-              className="pr-8 rounded-2xl bg-white/80 border border-slate-200 shadow-glass"
+              className="pr-8 rounded-2xl bg-white/80 dark:bg-blue-gray-800/80 border border-blue-gray-200 dark:border-blue-gray-700 shadow-glass text-blue-gray-700 dark:text-blue-gray-200"
               autoFocus={false}
               aria-label="Search artists by name"
             />
@@ -152,7 +152,7 @@ function Artists() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-white/80 border border-slate-200 text-slate-700 text-sm rounded-2xl focus:ring-primary-500 focus:border-primary-500 block p-2.5 shadow-glass outline-none min-w-[140px]"
+            className="bg-white/80 dark:bg-blue-gray-800/80 border border-blue-gray-200 dark:border-blue-gray-700 text-blue-gray-700 dark:text-blue-gray-200 text-sm rounded-2xl focus:ring-primary-500 focus:border-primary-500 block p-2.5 shadow-glass outline-none min-w-[140px]"
           >
             <option value="all">All Statuses</option>
             <option value="active">Active</option>
@@ -160,8 +160,8 @@ function Artists() {
             <option value="pending">Pending</option>
           </select>
         </div>
-        <p className="text-sm text-blue-gray-500">
-          Showing <span className="font-semibold text-blue-gray-900">{filteredArtists.length}</span> artist{filteredArtists.length !== 1 && 's'} {pagination?.total > 0 && `of ${pagination.total} total`}
+        <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400">
+          Showing <span className="font-semibold text-blue-gray-900 dark:text-white">{filteredArtists.length}</span> artist{filteredArtists.length !== 1 && 's'} {pagination?.total > 0 && `of ${pagination.total} total`}
         </p>
       </section>
 

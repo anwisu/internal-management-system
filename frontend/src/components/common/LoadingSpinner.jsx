@@ -11,7 +11,7 @@ function LoadingSpinner({ size = 'lg', overlay = false }) {
   const spinnerContent = (
     <div className="flex flex-col justify-center items-center py-12 gap-4" role="status" aria-live="polite" aria-label="Loading">
       <Spinner color="indigo" className={sizeClass} aria-hidden="true" />
-      <span className="text-slate-500 font-medium animate-pulse">Loading...</span>
+      <span className="text-blue-gray-500 font-medium animate-pulse">Loading...</span>
     </div>
   );
 

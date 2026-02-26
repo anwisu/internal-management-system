@@ -38,9 +38,9 @@ function Layout({ children }) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-950 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-blue-gray-900 dark:via-blue-gray-800 dark:to-indigo-950 transition-colors duration-300">
       <Navbar
-        className="sticky top-0 z-20 h-max max-w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-white/60 dark:border-slate-700/60 shadow-glass px-3 py-3 sm:px-6 lg:px-10"
+        className="sticky top-0 z-20 h-max max-w-full bg-white/80 dark:bg-blue-gray-900/80 backdrop-blur-xl border-b border-white/60 dark:border-blue-gray-700/60 shadow-glass px-3 py-3 sm:px-6 lg:px-10"
         role="navigation"
         aria-label="Main navigation"
       >
@@ -71,7 +71,7 @@ function Layout({ children }) {
                     size="sm"
                     className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${active
                       ? 'bg-primary-600 text-white shadow-soft-lg'
-                      : 'text-indigo-600 dark:text-indigo-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-slate-800'
+                      : 'text-indigo-600 dark:text-indigo-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-blue-gray-800'
                       }`}
                     aria-label={`Navigate to ${item.label}`}
                     aria-current={active ? 'page' : undefined}
@@ -87,12 +87,12 @@ function Layout({ children }) {
             <IconButton
               variant="text"
               onClick={toggleTheme}
-              className="text-indigo-600 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-full"
+              className="text-indigo-600 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-blue-gray-800 rounded-full"
               aria-label="Toggle Dark Mode"
             >
               {isDarkMode ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
             </IconButton>
-            <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-full bg-white dark:bg-slate-800 shadow-inner text-sm text-indigo-600 dark:text-indigo-300 border border-white/80 dark:border-slate-700">
+            <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-full bg-white dark:bg-blue-gray-800 shadow-inner text-sm text-indigo-600 dark:text-indigo-300 border border-white/80 dark:border-blue-gray-700">
               <div className="flex flex-col leading-tight">
                 <span className="font-semibold text-indigo-900 dark:text-indigo-100">Admin</span>
                 <span className="text-xs text-indigo-500 dark:text-indigo-400">Company Studio</span>
@@ -118,7 +118,7 @@ function Layout({ children }) {
               const active = location.pathname === item.path;
               return (
                 <Link key={item.path} to={item.path} onClick={() => setOpenNav(false)}>
-                  <Card className={`flex items-center justify-between px-4 py-3 rounded-2xl border ${active ? 'border-primary-200 bg-primary-50 dark:bg-primary-900/30 dark:border-primary-800' : 'border-white/70 bg-white/70 dark:bg-slate-800/70 dark:border-slate-700/70'} shadow-glass`}>
+                  <Card className={`flex items-center justify-between px-4 py-3 rounded-2xl border ${active ? 'border-primary-200 bg-primary-50 dark:bg-primary-900/30 dark:border-primary-800' : 'border-white/70 bg-white/70 dark:bg-blue-gray-800/70 dark:border-blue-gray-700/70'} shadow-glass`}>
                     <div className="flex items-center gap-3 text-indigo-700 dark:text-indigo-300">
                       {item.icon}
                       <span className="font-semibold">{item.label}</span>
@@ -132,7 +132,7 @@ function Layout({ children }) {
         </Collapse>
       </Navbar>
       <main className="px-3 sm:px-6 lg:px-10 py-6 sm:py-10 max-w-7xl mx-auto w-full flex-1">
-        <div className="rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-[0_25px_60px_rgba(15,23,42,0.08)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.3)] border border-white/80 dark:border-slate-700/80 p-4 sm:p-6 lg:p-8 transition-colors duration-300">
+        <div className="rounded-3xl bg-white/80 dark:bg-blue-gray-900/80 backdrop-blur-md shadow-[0_25px_60px_rgba(15,23,42,0.08)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.3)] border border-white/80 dark:border-blue-gray-700/80 p-4 sm:p-6 lg:p-8 transition-colors duration-300">
           {children}
         </div>
       </main>

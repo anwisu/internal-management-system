@@ -19,7 +19,7 @@ function ArtistView({ artist }) {
     return (
         <div className="space-y-6">
             {/* Header Image Area */}
-            <div className="relative w-full h-64 rounded-2xl overflow-hidden bg-slate-100 shadow-inner">
+            <div className="relative w-full h-64 rounded-2xl overflow-hidden bg-blue-gray-100 shadow-inner">
                 {(artist.imageUrl?.url || artist.imageUrl) ? (
                     <img
                         src={artist.imageUrl?.url || artist.imageUrl}
@@ -35,7 +35,7 @@ function ArtistView({ artist }) {
                     <Chip
                         value={artist.status}
                         color={statusColorMap[artist.status] || 'gray'}
-                        className="bg-white/90 text-slate-700 shadow backdrop-blur-sm"
+                        className="bg-white/90 text-blue-gray-700 shadow backdrop-blur-sm"
                     />
                 </div>
             </div>
@@ -43,7 +43,7 @@ function ArtistView({ artist }) {
             {/* Main Info */}
             <div className="space-y-4 px-2">
                 <div>
-                    <h3 className="text-3xl font-bold text-slate-900">{artist.name}</h3>
+                    <h3 className="text-3xl font-bold text-blue-gray-900">{artist.name}</h3>
                     {artist.genre && (
                         <p className="text-lg text-primary-600 font-medium mt-1">{artist.genre}</p>
                     )}
@@ -51,31 +51,31 @@ function ArtistView({ artist }) {
 
                 {artist.bio && (
                     <div className="prose prose-slate max-w-none">
-                        <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Biography</h4>
+                        <h4 className="text-sm font-semibold text-blue-gray-500 uppercase tracking-wider mb-2">Biography</h4>
                         <div
-                            className="text-slate-700 leading-relaxed quill-content"
+                            className="text-blue-gray-700 leading-relaxed quill-content"
                             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(artist.bio) }}
                         />
                     </div>
                 )}
 
                 {/* Contact Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-blue-gray-100">
                     {(artist.contactEmail || artist.contactPhone) && (
                         <div className="space-y-3">
-                            <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Contact Details</h4>
+                            <h4 className="text-sm font-semibold text-blue-gray-500 uppercase tracking-wider">Contact Details</h4>
                             <div className="space-y-2">
                                 {artist.contactEmail && (
-                                    <div className="flex items-center gap-3 text-slate-700">
-                                        <FiMail className="w-5 h-5 text-slate-400" />
+                                    <div className="flex items-center gap-3 text-blue-gray-700">
+                                        <FiMail className="w-5 h-5 text-blue-gray-400" />
                                         <a href={`mailto:${artist.contactEmail}`} className="hover:text-primary-600 transition-colors">
                                             {artist.contactEmail}
                                         </a>
                                     </div>
                                 )}
                                 {artist.contactPhone && (
-                                    <div className="flex items-center gap-3 text-slate-700">
-                                        <FiPhone className="w-5 h-5 text-slate-400" />
+                                    <div className="flex items-center gap-3 text-blue-gray-700">
+                                        <FiPhone className="w-5 h-5 text-blue-gray-400" />
                                         <a href={`tel:${artist.contactPhone}`} className="hover:text-primary-600 transition-colors">
                                             {artist.contactPhone}
                                         </a>
@@ -88,7 +88,7 @@ function ArtistView({ artist }) {
                     {/* Social Media */}
                     {artist.socialMedia && (artist.socialMedia.instagram || artist.socialMedia.twitter || artist.socialMedia.youtube) && (
                         <div className="space-y-3">
-                            <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Social Media</h4>
+                            <h4 className="text-sm font-semibold text-blue-gray-500 uppercase tracking-wider">Social Media</h4>
                             <div className="flex flex-wrap gap-2">
                                 {artist.socialMedia.instagram && (
                                     <a href={`https://instagram.com/${artist.socialMedia.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer">

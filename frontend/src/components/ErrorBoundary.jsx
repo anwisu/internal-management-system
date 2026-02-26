@@ -32,10 +32,10 @@ class ErrorBoundary extends React.Component {
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-50 flex items-center justify-center text-red-500 shadow-inner">
               <FiAlertTriangle className="w-10 h-10" aria-hidden="true" />
             </div>
-            <Typography variant="h3" color="blue-gray" className="mb-3 font-bold text-slate-800 tracking-tight">
+            <Typography variant="h3" color="blue-gray" className="mb-3 font-bold text-blue-gray-800 tracking-tight">
               Oops! Something went wrong.
             </Typography>
-            <Typography variant="paragraph" className="mb-8 text-slate-500 text-sm leading-relaxed max-w-[280px] mx-auto">
+            <Typography variant="paragraph" className="mb-8 text-blue-gray-500 text-sm leading-relaxed max-w-[280px] mx-auto">
               {this.state.error?.message || "An unexpected error occurred while loading this page. Don't worry, we're looking into it."}
             </Typography>
             <Button

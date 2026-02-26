@@ -36,12 +36,12 @@ function Modal({ open, onClose, title, children, footer, size = 'md' }) {
           variant="text"
           size="sm"
           onClick={onClose}
-          className="rounded-full hover:bg-slate-100 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+          className="rounded-full hover:bg-blue-gray-100 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
           aria-label="Close dialog"
           aria-hidden="false"
         >
           <AiOutlineClose
-            className="h-5 w-5 text-slate-600"
+            className="h-5 w-5 text-blue-gray-600"
             aria-hidden="true"
           />
         </IconButton>

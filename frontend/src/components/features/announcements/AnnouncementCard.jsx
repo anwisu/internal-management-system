@@ -16,20 +16,20 @@ function AnnouncementCard({ announcement, onView, onEdit, onDelete, hideActions 
   };
 
   return (
-    <Card className="bg-white/90 backdrop-blur rounded-2xl border border-white/70 shadow-glass hover:-translate-y-1 hover:shadow-soft-lg transition-all duration-200">
+    <Card className="bg-white/90 dark:bg-blue-gray-800/90 backdrop-blur rounded-2xl border border-white/70 dark:border-blue-gray-700/70 shadow-glass hover:-tranblue-gray-y-1 hover:shadow-soft-lg transition-all duration-200">
       <CardBody className="p-0 flex flex-col">
         <div className="p-5 space-y-3 flex-1">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="p-2 rounded-2xl bg-primary-100 text-primary-600">
+              <span className="p-2 rounded-2xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
                 <BsMegaphone className="w-4 h-4" aria-hidden="true" />
               </span>
               <div>
-                <h3 className="text-xl font-semibold text-slate-900">
+                <h3 className="text-xl font-semibold text-blue-gray-900 dark:text-white">
                   {announcement.title}
                 </h3>
                 {announcement.author && (
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400">
                     By {announcement.author}
                   </p>
                 )}
@@ -54,13 +54,13 @@ function AnnouncementCard({ announcement, onView, onEdit, onDelete, hideActions 
           </div>
           {announcement.content && (
             <div
-              className="text-sm text-slate-600 line-clamp-4 quill-content"
+              className="text-sm text-blue-gray-600 dark:text-blue-gray-300 line-clamp-4 quill-content"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(announcement.content) }}
             />
           )}
         </div>
         {!hideActions && (
-          <div className="px-5 pb-5 flex flex-wrap items-center justify-between text-xs text-slate-500 gap-3 border-t border-slate-100 pt-4">
+          <div className="px-5 pb-5 flex flex-wrap items-center justify-between text-xs text-blue-gray-500 dark:text-blue-gray-400 gap-3 border-t border-blue-gray-100 dark:border-blue-gray-700 pt-4">
             {announcement.createdAt && (
               <span>Updated {formatDate(announcement.createdAt)}</span>
             )}

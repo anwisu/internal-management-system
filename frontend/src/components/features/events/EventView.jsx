@@ -20,7 +20,7 @@ function EventView({ event }) {
     return (
         <div className="space-y-6">
             {/* Header Image Area */}
-            <div className="relative w-full h-64 rounded-2xl overflow-hidden bg-slate-100 shadow-inner">
+            <div className="relative w-full h-64 rounded-2xl overflow-hidden bg-blue-gray-100 shadow-inner">
                 {(event.imageUrl?.url || event.imageUrl) ? (
                     <img
                         src={event.imageUrl?.url || event.imageUrl}
@@ -36,7 +36,7 @@ function EventView({ event }) {
                     <Chip
                         value={event.status}
                         color={statusColorMap[event.status] || 'gray'}
-                        className="bg-white/90 text-slate-700 shadow backdrop-blur-sm"
+                        className="bg-white/90 text-blue-gray-700 shadow backdrop-blur-sm"
                     />
                 </div>
             </div>
@@ -44,8 +44,8 @@ function EventView({ event }) {
             {/* Main Info */}
             <div className="space-y-5 px-2">
                 <div>
-                    <h3 className="text-3xl font-bold text-slate-900">{event.title}</h3>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-3 text-slate-600 font-medium">
+                    <h3 className="text-3xl font-bold text-blue-gray-900">{event.title}</h3>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-3 text-blue-gray-600 font-medium">
                         {event.startDate && (
                             <div className="flex items-center gap-2">
                                 <FiClock className="w-5 h-5 text-primary-500" />
@@ -63,38 +63,38 @@ function EventView({ event }) {
 
                 {event.description && (
                     <div className="prose prose-slate max-w-none">
-                        <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Details</h4>
-                        <p className="text-slate-700 leading-relaxed whitespace-pre-wrap bg-slate-50 p-4 rounded-xl border border-slate-100">{event.description}</p>
+                        <h4 className="text-sm font-semibold text-blue-gray-500 uppercase tracking-wider mb-2">Details</h4>
+                        <p className="text-blue-gray-700 leading-relaxed whitespace-pre-wrap bg-blue-gray-50 p-4 rounded-xl border border-blue-gray-100">{event.description}</p>
                     </div>
                 )}
 
                 {/* Additional Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y border-slate-100">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y border-blue-gray-100">
                     <div className="space-y-1">
-                        <p className="text-xs text-slate-500 uppercase font-semibold">Capacity</p>
-                        <div className="flex items-center gap-2 text-slate-800 font-medium">
-                            <FiUsers className="w-4 h-4 text-slate-400" />
+                        <p className="text-xs text-blue-gray-500 uppercase font-semibold">Capacity</p>
+                        <div className="flex items-center gap-2 text-blue-gray-800 font-medium">
+                            <FiUsers className="w-4 h-4 text-blue-gray-400" />
                             <span>{event.capacity ? event.capacity.toLocaleString() : 'N/A'}</span>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <p className="text-xs text-slate-500 uppercase font-semibold">Tickets Sold</p>
-                        <div className="flex items-center gap-2 text-slate-800 font-medium">
-                            <FiUsers className="w-4 h-4 text-slate-400" />
+                        <p className="text-xs text-blue-gray-500 uppercase font-semibold">Tickets Sold</p>
+                        <div className="flex items-center gap-2 text-blue-gray-800 font-medium">
+                            <FiUsers className="w-4 h-4 text-blue-gray-400" />
                             <span>{event.ticketsSold ? event.ticketsSold.toLocaleString() : '0'}</span>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <p className="text-xs text-slate-500 uppercase font-semibold">Ticket Price</p>
-                        <div className="flex items-center gap-2 text-slate-800 font-medium">
-                            <FiDollarSign className="w-4 h-4 text-slate-400" />
+                        <p className="text-xs text-blue-gray-500 uppercase font-semibold">Ticket Price</p>
+                        <div className="flex items-center gap-2 text-blue-gray-800 font-medium">
+                            <FiDollarSign className="w-4 h-4 text-blue-gray-400" />
                             <span>{event.ticketPrice ? `$${event.ticketPrice.toFixed(2)}` : 'Free'}</span>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <p className="text-xs text-slate-500 uppercase font-semibold">Est. Revenue</p>
-                        <div className="flex items-center gap-2 text-slate-800 font-medium">
-                            <FiDollarSign className="w-4 h-4 text-slate-400" />
+                        <p className="text-xs text-blue-gray-500 uppercase font-semibold">Est. Revenue</p>
+                        <div className="flex items-center gap-2 text-blue-gray-800 font-medium">
+                            <FiDollarSign className="w-4 h-4 text-blue-gray-400" />
                             <span>{event.ticketsSold && event.ticketPrice ? `$${(event.ticketsSold * event.ticketPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '$0.00'}</span>
                         </div>
                     </div>
@@ -103,10 +103,10 @@ function EventView({ event }) {
                 {/* Artists Lineup */}
                 {event.artists && event.artists.length > 0 && (
                     <div className="space-y-3 pt-2">
-                        <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Lineup</h4>
+                        <h4 className="text-sm font-semibold text-blue-gray-500 uppercase tracking-wider">Lineup</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {event.artists.map((artist) => (
-                                <div key={artist._id} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                <div key={artist._id} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-blue-gray-200 shadow-sm hover:shadow-md transition-shadow">
                                     <Avatar
                                         src={artist.imageUrl?.url || artist.imageUrl}
                                         alt={artist.name}
@@ -115,9 +115,9 @@ function EventView({ event }) {
                                         className="ring-2 ring-primary-50"
                                     />
                                     <div>
-                                        <p className="font-semibold text-slate-800">{artist.name}</p>
+                                        <p className="font-semibold text-blue-gray-800">{artist.name}</p>
                                         {artist.genre && (
-                                            <p className="text-xs text-slate-500 line-clamp-1">{artist.genre}</p>
+                                            <p className="text-xs text-blue-gray-500 line-clamp-1">{artist.genre}</p>
                                         )}
                                     </div>
                                 </div>

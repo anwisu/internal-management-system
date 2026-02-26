@@ -111,13 +111,13 @@ function Events() {
         <Chip value="Event command center" className="w-fit bg-primary-50 text-primary-700 font-semibold" />
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-bold text-blue-gray-900 flex items-center gap-3">
-              <span className="p-2 rounded-2xl bg-primary-100 text-primary-600">
+            <h1 className="text-3xl sm:text-4xl font-bold text-blue-gray-900 dark:text-white flex items-center gap-3">
+              <span className="p-2 rounded-2xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
                 <FiCalendar className="w-5 h-5" aria-hidden="true" />
               </span>
               Events & showcases
             </h1>
-            <p className="text-base text-blue-gray-500 max-w-2xl">
+            <p className="text-base text-blue-gray-500 dark:text-blue-gray-300 max-w-2xl">
               Design memorable experiences, align venues, and ensure the right artists take the stage.
             </p>
           </div>
@@ -146,7 +146,7 @@ function Events() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 icon={<FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />}
-                className="pr-8 rounded-2xl bg-white/80 border border-slate-200 shadow-glass"
+                className="pr-8 rounded-2xl bg-white/80 dark:bg-blue-gray-800/80 border border-blue-gray-200 dark:border-blue-gray-700 shadow-glass text-blue-gray-700 dark:text-blue-gray-200"
                 autoFocus={false}
                 aria-label="Search events by title or venue"
               />
@@ -154,7 +154,7 @@ function Events() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-white/80 border border-slate-200 text-slate-700 text-sm rounded-2xl focus:ring-primary-500 focus:border-primary-500 block p-2.5 shadow-glass outline-none min-w-[140px]"
+              className="bg-white/80 dark:bg-blue-gray-800/80 border border-blue-gray-200 dark:border-blue-gray-700 text-blue-gray-700 dark:text-blue-gray-200 text-sm rounded-2xl focus:ring-primary-500 focus:border-primary-500 block p-2.5 shadow-glass outline-none min-w-[140px]"
             >
               <option value="all">All Statuses</option>
               <option value="upcoming">Upcoming</option>
@@ -163,25 +163,25 @@ function Events() {
               <option value="cancelled">Cancelled</option>
             </select>
           </div>
-          <div className="flex bg-white/80 p-1 rounded-xl shadow-sm border border-slate-100 w-fit shrink-0">
+          <div className="flex bg-white/80 dark:bg-blue-gray-800/80 p-1 rounded-xl shadow-sm border border-blue-gray-100 dark:border-blue-gray-700 w-fit shrink-0">
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-blue-gray-500 dark:text-blue-gray-400 hover:text-blue-gray-700 dark:hover:text-blue-gray-300 hover:bg-blue-gray-50 dark:hover:bg-blue-gray-700'}`}
               aria-label="List view"
             >
               <FiList className="w-5 h-5" />
             </button>
             <button
               onClick={() => setViewMode('calendar')}
-              className={`p-2 rounded-lg transition-all ${viewMode === 'calendar' ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'calendar' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-blue-gray-500 dark:text-blue-gray-400 hover:text-blue-gray-700 dark:hover:text-blue-gray-300 hover:bg-blue-gray-50 dark:hover:bg-blue-gray-700'}`}
               aria-label="Calendar view"
             >
               <FiCalendar className="w-5 h-5" />
             </button>
           </div>
         </div>
-        <p className="text-sm text-blue-gray-500">
-          Displaying <span className="font-semibold text-blue-gray-900">{filteredEvents.length}</span> event{filteredEvents.length !== 1 && 's'} {pagination?.total > 0 && `of ${pagination.total} total`}
+        <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400">
+          Displaying <span className="font-semibold text-blue-gray-900 dark:text-white">{filteredEvents.length}</span> event{filteredEvents.length !== 1 && 's'} {pagination?.total > 0 && `of ${pagination.total} total`}
         </p>
       </section>
 

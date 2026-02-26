@@ -42,14 +42,14 @@ function Dashboard() {
             value="Welcome back"
             color="blue"
             variant="ghost"
-            className="w-fit bg-primary-50 text-primary-700 font-semibold"
+            className="w-fit bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 font-semibold"
           />
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl font-bold text-blue-gray-900">
+              <h1 className="text-3xl sm:text-4xl font-bold text-blue-gray-900 dark:text-white">
                 Dashboard
               </h1>
-              <p className="text-base text-blue-gray-500 max-w-2xl">
+              <p className="text-base text-blue-gray-500 dark:text-blue-gray-300 max-w-2xl">
                 Monitor artists, upcoming events, and community announcements
                 from a single, elegant control room.
               </p>
@@ -72,57 +72,57 @@ function Dashboard() {
           </div>
         </div>
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
-          <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
+          <Card className="rounded-2xl border border-white/70 dark:border-blue-gray-700/70 bg-white/90 dark:bg-blue-gray-800/90 shadow-glass p-6 hover:-tranblue-gray-y-1 hover:shadow-soft-lg transition">
             <CardBody className="p-0 space-y-2">
-              <div className="flex items-center gap-3 text-blue-gray-500 text-sm">
-                <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
+              <div className="flex items-center gap-3 text-blue-gray-500 dark:text-blue-gray-400 text-sm">
+                <div className="p-2 rounded-xl bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
                   <FiActivity className="w-5 h-5" aria-hidden="true" />
                 </div>
                 Artists overview
               </div>
-              <h3 className="text-4xl font-extrabold text-blue-gray-900">
+              <h3 className="text-4xl font-extrabold text-blue-gray-900 dark:text-white">
                 {stats?.artists?.total || 0}
               </h3>
-              <p className="text-sm text-blue-gray-500">
-                <span className="font-semibold text-primary-600">
+              <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400">
+                <span className="font-semibold text-primary-600 dark:text-primary-400">
                   {stats?.artists?.active || 0}
                 </span>{" "}
                 active profiles
               </p>
             </CardBody>
           </Card>
-          <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
+          <Card className="rounded-2xl border border-white/70 dark:border-blue-gray-700/70 bg-white/90 dark:bg-blue-gray-800/90 shadow-glass p-6 hover:-tranblue-gray-y-1 hover:shadow-soft-lg transition">
             <CardBody className="p-0 space-y-2">
-              <div className="flex items-center gap-3 text-blue-gray-500 text-sm">
-                <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
+              <div className="flex items-center gap-3 text-blue-gray-500 dark:text-blue-gray-400 text-sm">
+                <div className="p-2 rounded-xl bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
                   <FiCalendar className="w-5 h-5" aria-hidden="true" />
                 </div>
                 Event pipeline
               </div>
-              <h3 className="text-4xl font-extrabold text-blue-gray-900">
+              <h3 className="text-4xl font-extrabold text-blue-gray-900 dark:text-white">
                 {stats?.events?.total || 0}
               </h3>
-              <p className="text-sm text-blue-gray-500">
-                <span className="font-semibold text-primary-600">
+              <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400">
+                <span className="font-semibold text-primary-600 dark:text-primary-400">
                   {stats?.events?.upcoming || 0}
                 </span>{" "}
                 upcoming engagements
               </p>
             </CardBody>
           </Card>
-          <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
+          <Card className="rounded-2xl border border-white/70 dark:border-blue-gray-700/70 bg-white/90 dark:bg-blue-gray-800/90 shadow-glass p-6 hover:-tranblue-gray-y-1 hover:shadow-soft-lg transition">
             <CardBody className="p-0 space-y-2">
-              <div className="flex items-center gap-3 text-blue-gray-500 text-sm">
-                <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
+              <div className="flex items-center gap-3 text-blue-gray-500 dark:text-blue-gray-400 text-sm">
+                <div className="p-2 rounded-xl bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
                   <FiBell className="w-5 h-5" aria-hidden="true" />
                 </div>
                 Announcements radar
               </div>
-              <h3 className="text-4xl font-extrabold text-blue-gray-900">
+              <h3 className="text-4xl font-extrabold text-blue-gray-900 dark:text-white">
                 {stats?.announcements?.total || 0}
               </h3>
-              <p className="text-sm text-blue-gray-500">
-                <span className="font-semibold text-primary-600">
+              <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400">
+                <span className="font-semibold text-primary-600 dark:text-primary-400">
                   {stats?.announcements?.active || 0}
                 </span>{" "}
                 actively broadcasting
@@ -130,19 +130,19 @@ function Dashboard() {
             </CardBody>
           </Card>
 
-          <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
+          <Card className="rounded-2xl border border-white/70 dark:border-blue-gray-700/70 bg-white/90 dark:bg-blue-gray-800/90 shadow-glass p-6 hover:-tranblue-gray-y-1 hover:shadow-soft-lg transition">
             <CardBody className="p-0 space-y-2">
-              <div className="flex items-center gap-3 text-blue-gray-500 text-sm">
-                <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
+              <div className="flex items-center gap-3 text-blue-gray-500 dark:text-blue-gray-400 text-sm">
+                <div className="p-2 rounded-xl bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
                   <FiDollarSign className="w-5 h-5" aria-hidden="true" />
                 </div>
                 Ticketing Revenue (Upcoming)
               </div>
-              <h3 className="text-4xl font-extrabold text-blue-gray-900">
+              <h3 className="text-4xl font-extrabold text-blue-gray-900 dark:text-white">
                 ${stats?.events?.ticketing?.revenue || 0}
               </h3>
-              <p className="text-sm text-blue-gray-500">
-                <span className="font-semibold text-primary-600">
+              <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400">
+                <span className="font-semibold text-primary-600 dark:text-primary-400">
                   {stats?.events?.ticketing?.sold || 0} / {stats?.events?.ticketing?.capacity || 0}
                 </span>{" "}
                 tickets sold
@@ -156,13 +156,13 @@ function Dashboard() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <p className="text-sm uppercase tracking-wide text-blue-gray-400">
+            <p className="text-sm uppercase tracking-wide text-blue-gray-400 dark:text-blue-gray-500">
               Events
             </p>
-            <h2 className="text-2xl font-semibold text-blue-gray-900">
+            <h2 className="text-2xl font-semibold text-blue-gray-900 dark:text-white">
               Upcoming experiences
             </h2>
-            <p className="text-sm text-blue-gray-500 mt-1">
+            <p className="text-sm text-blue-gray-500 dark:text-blue-gray-300 mt-1">
               Preview what’s next in the calendar.
             </p>
           </div>
@@ -205,13 +205,13 @@ function Dashboard() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <p className="text-sm uppercase tracking-wide text-blue-gray-400">
+            <p className="text-sm uppercase tracking-wide text-blue-gray-400 dark:text-blue-gray-500">
               Announcements
             </p>
-            <h2 className="text-2xl font-semibold text-blue-gray-900">
+            <h2 className="text-2xl font-semibold text-blue-gray-900 dark:text-white">
               Active broadcasts
             </h2>
-            <p className="text-sm text-blue-gray-500 mt-1">
+            <p className="text-sm text-blue-gray-500 dark:text-blue-gray-300 mt-1">
               Keep everyone in sync with clear messaging.
             </p>
           </div>

@@ -27,10 +27,10 @@ function AnnouncementView({ announcement }) {
                         <BsMegaphone className="w-8 h-8" aria-hidden="true" />
                     </div>
                     <div className="space-y-1">
-                        <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">
+                        <h3 className="text-2xl sm:text-3xl font-bold text-blue-gray-900 leading-tight">
                             {announcement.title}
                         </h3>
-                        <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-500 pt-1">
+                        <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-blue-gray-500 pt-1">
                             {announcement.author && (
                                 <div className="flex items-center gap-1.5">
                                     <FiUser className="w-4 h-4" />
@@ -68,7 +68,7 @@ function AnnouncementView({ announcement }) {
             <div className="px-2">
                 <div className="prose prose-slate prose-lg max-w-none">
                     <div
-                        className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-soft-sm leading-relaxed text-slate-700 font-medium quill-content"
+                        className="bg-white p-6 sm:p-8 rounded-2xl border border-blue-gray-100 shadow-soft-sm leading-relaxed text-blue-gray-700 font-medium quill-content"
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(announcement.content) }}
                     />
                 </div>

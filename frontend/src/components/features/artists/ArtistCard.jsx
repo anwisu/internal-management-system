@@ -16,7 +16,7 @@ function ArtistCard({ artist, onView, onEdit, onDelete, hideActions = false }) {
   };
 
   return (
-    <Card className="bg-white/90 backdrop-blur rounded-2xl border border-white/70 shadow-glass hover:-translate-y-1 hover:shadow-soft-lg transition-all duration-200">
+    <Card className="bg-white/90 dark:bg-blue-gray-800/90 backdrop-blur rounded-2xl border border-white/70 dark:border-blue-gray-700/70 shadow-glass hover:-tranblue-gray-y-1 hover:shadow-soft-lg transition-all duration-200">
       <CardBody className="p-0 flex flex-col">
         <div className="relative">
           {(artist.imageUrl?.url || artist.imageUrl) ? (
@@ -26,7 +26,7 @@ function ArtistCard({ artist, onView, onEdit, onDelete, hideActions = false }) {
               className="w-full h-48 object-cover rounded-t-2xl"
             />
           ) : (
-            <div className="w-full h-48 rounded-t-2xl bg-gradient-to-br from-primary-100 to-white flex items-center justify-center text-primary-500">
+            <div className="w-full h-48 rounded-t-2xl bg-gradient-to-br from-primary-100 dark:from-blue-gray-700 to-white dark:to-blue-gray-800 flex items-center justify-center text-primary-500 dark:text-primary-400">
               <FiMusic className="w-10 h-10" aria-hidden="true" />
             </div>
           )}
@@ -34,19 +34,19 @@ function ArtistCard({ artist, onView, onEdit, onDelete, hideActions = false }) {
             value={artist.status}
             color={statusColorMap[artist.status] || 'gray'}
             size="sm"
-            className="absolute top-4 left-4 rounded-full bg-white/90 text-slate-700 shadow"
+            className="absolute top-4 left-4 rounded-full bg-white/90 dark:bg-blue-gray-800/90 text-blue-gray-700 dark:text-blue-gray-200 shadow"
           />
         </div>
         <div className="p-5 flex flex-col flex-1 space-y-3">
           <div>
-            <h3 className="text-xl font-semibold text-slate-900">{artist.name}</h3>
+            <h3 className="text-xl font-semibold text-blue-gray-900 dark:text-white">{artist.name}</h3>
             {artist.genre && (
-              <p className="text-sm text-slate-500 mt-1">{artist.genre}</p>
+              <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400 mt-1">{artist.genre}</p>
             )}
           </div>
           {artist.bio && (
             <div
-              className="text-sm text-slate-600 line-clamp-3 flex-1 quill-content"
+              className="text-sm text-blue-gray-600 dark:text-blue-gray-300 line-clamp-3 flex-1 quill-content"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(artist.bio) }}
             />
           )}

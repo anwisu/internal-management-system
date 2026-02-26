@@ -17,7 +17,7 @@ function EventCard({ event, onView, onEdit, onDelete, hideActions = false }) {
   };
 
   return (
-    <Card className="bg-white/90 backdrop-blur rounded-2xl border border-white/70 shadow-glass hover:-translate-y-1 hover:shadow-soft-lg transition-all duration-200">
+    <Card className="bg-white/90 dark:bg-blue-gray-800/90 backdrop-blur rounded-2xl border border-white/70 dark:border-blue-gray-700/70 shadow-glass hover:-tranblue-gray-y-1 hover:shadow-soft-lg transition-all duration-200">
       <CardBody className="p-0 flex flex-col">
         <div className="relative">
           {(event.imageUrl?.url || event.imageUrl) ? (
@@ -27,7 +27,7 @@ function EventCard({ event, onView, onEdit, onDelete, hideActions = false }) {
               className="w-full h-48 object-cover rounded-t-2xl"
             />
           ) : (
-            <div className="w-full h-48 rounded-t-2xl bg-gradient-to-br from-primary-100 to-white flex items-center justify-center text-primary-500">
+            <div className="w-full h-48 rounded-t-2xl bg-gradient-to-br from-primary-100 dark:from-blue-gray-700 to-white dark:to-blue-gray-800 flex items-center justify-center text-primary-500 dark:text-primary-400">
               <FiCalendar className="w-10 h-10" aria-hidden="true" />
             </div>
           )}
@@ -35,25 +35,25 @@ function EventCard({ event, onView, onEdit, onDelete, hideActions = false }) {
             value={event.status}
             color={statusColorMap[event.status] || 'gray'}
             size="sm"
-            className="absolute top-4 left-4 rounded-full bg-white/90 text-slate-700 shadow"
+            className="absolute top-4 left-4 rounded-full bg-white/90 dark:bg-blue-gray-800/90 text-blue-gray-700 dark:text-blue-gray-200 shadow"
           />
         </div>
         <div className="p-5 flex flex-col flex-1 space-y-3">
           <div>
-            <h3 className="text-xl font-semibold text-slate-900">{event.title}</h3>
+            <h3 className="text-xl font-semibold text-blue-gray-900 dark:text-white">{event.title}</h3>
             {event.venue && (
-              <p className="text-sm text-slate-500 mt-1">{event.venue}</p>
+              <p className="text-sm text-blue-gray-500 dark:text-blue-gray-400 mt-1">{event.venue}</p>
             )}
             {event.startDate && (
-              <p className="text-xs text-slate-400">{formatDateTime(event.startDate)}</p>
+              <p className="text-xs text-blue-gray-400 dark:text-blue-gray-500">{formatDateTime(event.startDate)}</p>
             )}
           </div>
           {event.description && (
-            <p className="text-sm text-slate-600 line-clamp-3 flex-1">{event.description}</p>
+            <p className="text-sm text-blue-gray-600 dark:text-blue-gray-300 line-clamp-3 flex-1">{event.description}</p>
           )}
           {event.artists && event.artists.length > 0 && (
             <div className="flex items-center gap-2">
-              <p className="text-xs uppercase tracking-wide text-slate-400">Artists</p>
+              <p className="text-xs uppercase tracking-wide text-blue-gray-400 dark:text-blue-gray-500">Artists</p>
               <div className="flex -space-x-2">
                 {event.artists.slice(0, 3).map((artist) => (
                   <Avatar
@@ -69,7 +69,7 @@ function EventCard({ event, onView, onEdit, onDelete, hideActions = false }) {
                   <Avatar
                     size="sm"
                     variant="circular"
-                    className="bg-slate-200 text-slate-700 ring-2 ring-white"
+                    className="bg-blue-gray-200 dark:bg-blue-gray-700 text-blue-gray-700 dark:text-blue-gray-300 ring-2 ring-white dark:ring-blue-gray-800"
                     aria-label={`+${event.artists.length - 3} more artists`}
                   >
                     +{event.artists.length - 3}
