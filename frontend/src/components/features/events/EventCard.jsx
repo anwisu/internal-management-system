@@ -1,5 +1,6 @@
+import React from 'react';
 import { Card, CardBody, Chip, Button, Avatar } from '@material-tailwind/react';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { FiCalendar } from 'react-icons/fi';
 import { formatDateTime } from '../../../utils/formatters';
 
@@ -7,7 +8,7 @@ import { formatDateTime } from '../../../utils/formatters';
  * Event Card component
  * Displays event information in a card format
  */
-function EventCard({ event, onEdit, onDelete }) {
+function EventCard({ event, onView, onEdit, onDelete }) {
   const statusColorMap = {
     upcoming: 'blue',
     ongoing: 'green',
@@ -69,6 +70,7 @@ function EventCard({ event, onEdit, onDelete }) {
                     size="sm"
                     variant="circular"
                     className="bg-slate-200 text-slate-700 ring-2 ring-white"
+                    aria-label={`+${event.artists.length - 3} more artists`}
                   >
                     +{event.artists.length - 3}
                   </Avatar>
@@ -76,11 +78,21 @@ function EventCard({ event, onEdit, onDelete }) {
               </div>
             </div>
           )}
-          <div className="flex flex-wrap gap-3 pt-2">
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Button
+              size="sm"
+              variant="outlined"
+              onClick={() => onView(event)}
+              className="border-primary-200 text-primary-600 px-3 py-2 rounded-full hover:bg-primary-50 shadow-sm transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              aria-label={`View details for ${event.title}`}
+            >
+              <EyeIcon className="h-4 w-4" aria-hidden="true" />
+              <span>View</span>
+            </Button>
             <Button
               size="sm"
               onClick={() => onEdit(event)}
-              className="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className="bg-primary-600 text-white px-3 py-2 rounded-full hover:bg-primary-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               aria-label={`Edit ${event.title}`}
             >
               <PencilIcon className="h-4 w-4" aria-hidden="true" />
@@ -89,7 +101,7 @@ function EventCard({ event, onEdit, onDelete }) {
             <Button
               size="sm"
               onClick={() => onDelete(event)}
-              className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+              className="bg-red-600 text-white px-3 py-2 rounded-full hover:bg-red-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
               aria-label={`Delete ${event.title}`}
             >
               <TrashIcon className="h-4 w-4" aria-hidden="true" />
@@ -102,5 +114,5 @@ function EventCard({ event, onEdit, onDelete }) {
   );
 }
 
-export default EventCard;
+export default React.memo(EventCard);
 

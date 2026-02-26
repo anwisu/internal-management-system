@@ -65,7 +65,6 @@ const artistSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
-artistSchema.index({ name: 1 });
 artistSchema.index({ status: 1 });
 
 const Artist = mongoose.model('Artist', artistSchema);

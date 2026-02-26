@@ -1,5 +1,5 @@
 import { Card, CardBody, Chip, Button } from '@material-tailwind/react';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { BsMegaphone } from "react-icons/bs";
 import { formatDate } from '../../../utils/formatters';
 
@@ -7,7 +7,7 @@ import { formatDate } from '../../../utils/formatters';
  * Announcement Card component
  * Displays announcement information in a card format
  */
-function AnnouncementCard({ announcement, onEdit, onDelete }) {
+function AnnouncementCard({ announcement, onView, onEdit, onDelete }) {
   const priorityColorMap = {
     high: 'red',
     medium: 'amber',
@@ -64,8 +64,18 @@ function AnnouncementCard({ announcement, onEdit, onDelete }) {
           <div className="flex gap-2">
             <Button
               size="sm"
+              variant="outlined"
+              onClick={() => onView(announcement)}
+              className="border-primary-200 text-primary-600 px-3 py-2 rounded-full hover:bg-primary-50 shadow-sm transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              aria-label={`View details for ${announcement.title}`}
+            >
+              <EyeIcon className="h-4 w-4" aria-hidden="true" />
+              <span>View</span>
+            </Button>
+            <Button
+              size="sm"
               onClick={() => onEdit(announcement)}
-              className="bg-primary-600 text-white px-4 py-2 rounded-full hover:bg-primary-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className="bg-primary-600 text-white px-3 py-2 rounded-full hover:bg-primary-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               aria-label={`Edit ${announcement.title}`}
             >
               <PencilIcon className="h-4 w-4" aria-hidden="true" />
@@ -74,7 +84,7 @@ function AnnouncementCard({ announcement, onEdit, onDelete }) {
             <Button
               size="sm"
               onClick={() => onDelete(announcement)}
-              className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+              className="bg-red-600 text-white px-3 py-2 rounded-full hover:bg-red-700 shadow-soft-lg transition-all duration-200 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
               aria-label={`Delete ${announcement.title}`}
             >
               <TrashIcon className="h-4 w-4" aria-hidden="true" />
