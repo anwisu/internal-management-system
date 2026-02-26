@@ -3,6 +3,7 @@ import { Button, Input, Chip } from '@material-tailwind/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { FiSearch, FiUsers } from 'react-icons/fi';
 import ArtistCard from '../components/features/artists/ArtistCard';
+import ArtistView from '../components/features/artists/ArtistView';
 import Modal from '../components/common/Modal';
 import ArtistForm from '../components/forms/ArtistForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -19,6 +20,7 @@ import { useDebounce } from '../hooks/useDebounce';
 function Artists() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState('create'); // 'create', 'edit', 'view'
   const [selectedArtist, setSelectedArtist] = useState(null);
   const { success, error: showError } = useToast();
   const dispatch = useAppDispatch();
@@ -32,17 +34,25 @@ function Artists() {
 
   const filteredArtists = debouncedSearch
     ? artists.filter((artist) =>
-        artist.name.toLowerCase().includes(debouncedSearch.toLowerCase())
-      )
+      artist.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+    )
     : artists;
 
   const handleCreate = () => {
     setSelectedArtist(null);
+    setModalMode('create');
     setIsModalOpen(true);
   };
 
   const handleEdit = (artist) => {
     setSelectedArtist(artist);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleView = (artist) => {
+    setSelectedArtist(artist);
+    setModalMode('view');
     setIsModalOpen(true);
   };
 
@@ -148,6 +158,7 @@ function Artists() {
             <ArtistCard
               key={artist._id}
               artist={artist}
+              onView={handleView}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
@@ -161,17 +172,24 @@ function Artists() {
           setIsModalOpen(false);
           setSelectedArtist(null);
         }}
-        title={selectedArtist ? "Edit Artist" : "Create Artist"}
-        size="lg"
+        title={
+          modalMode === 'view' ? "Artist Details" :
+            modalMode === 'edit' ? "Edit Artist" : "Create Artist"
+        }
+        size={modalMode === 'view' ? 'lg' : 'lg'}
       >
-        <ArtistForm
-          artist={selectedArtist}
-          onSubmit={handleSubmit}
-          onCancel={() => {
-            setIsModalOpen(false);
-            setSelectedArtist(null);
-          }}
-        />
+        {modalMode === 'view' ? (
+          <ArtistView artist={selectedArtist} />
+        ) : (
+          <ArtistForm
+            artist={selectedArtist}
+            onSubmit={handleSubmit}
+            onCancel={() => {
+              setIsModalOpen(false);
+              setSelectedArtist(null);
+            }}
+          />
+        )}
       </Modal>
     </div>
   );

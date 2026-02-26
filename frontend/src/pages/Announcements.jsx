@@ -4,6 +4,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { FiSearch } from 'react-icons/fi';
 import { BsMegaphone } from "react-icons/bs";
 import AnnouncementCard from '../components/features/announcements/AnnouncementCard';
+import AnnouncementView from '../components/features/announcements/AnnouncementView';
 import Modal from '../components/common/Modal';
 import AnnouncementForm from '../components/forms/AnnouncementForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -20,6 +21,7 @@ import { useDebounce } from '../hooks/useDebounce';
 function Announcements() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState('create'); // 'create', 'edit', 'view'
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
   const { success, error: showError } = useToast();
   const dispatch = useAppDispatch();
@@ -33,19 +35,27 @@ function Announcements() {
 
   const filteredAnnouncements = debouncedSearch
     ? announcements.filter(
-        (announcement) =>
-          announcement.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-          announcement.content?.toLowerCase().includes(debouncedSearch.toLowerCase())
-      )
+      (announcement) =>
+        announcement.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        announcement.content?.toLowerCase().includes(debouncedSearch.toLowerCase())
+    )
     : announcements;
 
   const handleCreate = () => {
     setSelectedAnnouncement(null);
+    setModalMode('create');
     setIsModalOpen(true);
   };
 
   const handleEdit = (announcement) => {
     setSelectedAnnouncement(announcement);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleView = (announcement) => {
+    setSelectedAnnouncement(announcement);
+    setModalMode('view');
     setIsModalOpen(true);
   };
 
@@ -161,6 +171,7 @@ function Announcements() {
             <AnnouncementCard
               key={announcement._id}
               announcement={announcement}
+              onView={handleView}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
@@ -175,23 +186,27 @@ function Announcements() {
           setSelectedAnnouncement(null);
         }}
         title={
-          selectedAnnouncement ? "Edit Announcement" : "Create Announcement"
+          modalMode === 'view' ? "Announcement Details" :
+            modalMode === 'edit' ? "Edit Announcement" : "Create Announcement"
         }
         size="lg"
         aria-label={
-          selectedAnnouncement
-            ? "Edit announcement form"
-            : "Create announcement form"
+          modalMode === 'view' ? "View announcement details" :
+            modalMode === 'edit' ? "Edit announcement form" : "Create announcement form"
         }
       >
-        <AnnouncementForm
-          announcement={selectedAnnouncement}
-          onSubmit={handleSubmit}
-          onCancel={() => {
-            setIsModalOpen(false);
-            setSelectedAnnouncement(null);
-          }}
-        />
+        {modalMode === 'view' ? (
+          <AnnouncementView announcement={selectedAnnouncement} />
+        ) : (
+          <AnnouncementForm
+            announcement={selectedAnnouncement}
+            onSubmit={handleSubmit}
+            onCancel={() => {
+              setIsModalOpen(false);
+              setSelectedAnnouncement(null);
+            }}
+          />
+        )}
       </Modal>
     </div>
   );

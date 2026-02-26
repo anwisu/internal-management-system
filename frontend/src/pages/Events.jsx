@@ -3,6 +3,7 @@ import { Button, Input, Chip } from '@material-tailwind/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { FiSearch, FiCalendar } from 'react-icons/fi';
 import EventCard from '../components/features/events/EventCard';
+import EventView from '../components/features/events/EventView';
 import Modal from '../components/common/Modal';
 import EventForm from '../components/forms/EventForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -19,6 +20,7 @@ import { useDebounce } from '../hooks/useDebounce';
 function Events() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState('create'); // 'create', 'edit', 'view'
   const [selectedEvent, setSelectedEvent] = useState(null);
   const { success, error: showError } = useToast();
   const dispatch = useAppDispatch();
@@ -32,18 +34,26 @@ function Events() {
 
   const filteredEvents = debouncedSearch
     ? events.filter((event) =>
-        event.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        event.venue?.toLowerCase().includes(debouncedSearch.toLowerCase())
-      )
+      event.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+      event.venue?.toLowerCase().includes(debouncedSearch.toLowerCase())
+    )
     : events;
 
   const handleCreate = () => {
     setSelectedEvent(null);
+    setModalMode('create');
     setIsModalOpen(true);
   };
 
   const handleEdit = (event) => {
     setSelectedEvent(event);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleView = (event) => {
+    setSelectedEvent(event);
+    setModalMode('view');
     setIsModalOpen(true);
   };
 
@@ -147,6 +157,7 @@ function Events() {
             <EventCard
               key={event._id}
               event={event}
+              onView={handleView}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
@@ -160,18 +171,28 @@ function Events() {
           setIsModalOpen(false);
           setSelectedEvent(null);
         }}
-        title={selectedEvent ? 'Edit Event' : 'Create Event'}
+        title={
+          modalMode === 'view' ? "Event Details" :
+            modalMode === 'edit' ? 'Edit Event' : 'Create Event'
+        }
         size="lg"
-        aria-label={selectedEvent ? 'Edit event form' : 'Create event form'}
+        aria-label={
+          modalMode === 'view' ? "View event details" :
+            modalMode === 'edit' ? 'Edit event form' : 'Create event form'
+        }
       >
-        <EventForm
-          event={selectedEvent}
-          onSubmit={handleSubmit}
-          onCancel={() => {
-            setIsModalOpen(false);
-            setSelectedEvent(null);
-          }}
-        />
+        {modalMode === 'view' ? (
+          <EventView event={selectedEvent} />
+        ) : (
+          <EventForm
+            event={selectedEvent}
+            onSubmit={handleSubmit}
+            onCancel={() => {
+              setIsModalOpen(false);
+              setSelectedEvent(null);
+            }}
+          />
+        )}
       </Modal>
     </div>
   );
