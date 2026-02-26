@@ -18,15 +18,15 @@ export default defineConfig(({ mode }) => {
       },
     },
 
-    preview: {
-      // eslint-disable-next-line no-undef
-      port: Number(process.env.PORT) || Number(env.PORT) || 3000,
-      host: "0.0.0.0",
-      strictPort: true,
-      cors: true,
+    // preview: {
+    //   // eslint-disable-next-line no-undef
+    //   port: Number(process.env.PORT) || Number(env.PORT) || 3000,
+    //   host: "0.0.0.0",
+    //   strictPort: true,
+    //   cors: true,
 
-      allowedHosts: ["frontend-service-production-3662.up.railway.app"],
-    },
+    //   allowedHosts: ["frontend-service-production-3662.up.railway.app"],
+    // },
 
     build: {
       outDir: "dist",
