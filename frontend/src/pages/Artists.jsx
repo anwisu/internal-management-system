@@ -8,6 +8,7 @@ import Modal from '../components/common/Modal';
 import ArtistForm from '../components/forms/ArtistForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
+import Pagination from '../components/common/Pagination';
 import { useToast } from '../context/ToastContext';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchArtists, createArtist, updateArtist, deleteArtist } from '../store/slices/artistSlice';
@@ -19,24 +20,31 @@ import { useDebounce } from '../hooks/useDebounce';
  */
 function Artists() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState('active');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('create'); // 'create', 'edit', 'view'
   const [selectedArtist, setSelectedArtist] = useState(null);
   const { success, error: showError } = useToast();
   const dispatch = useAppDispatch();
-  const { artists, loading, error } = useAppSelector((state) => state.artists);
+  const { artists, pagination, loading, error } = useAppSelector((state) => state.artists);
 
   const debouncedSearch = useDebounce(searchTerm, 500);
 
   useEffect(() => {
-    dispatch(fetchArtists({ status: debouncedSearch ? undefined : 'active' }));
-  }, [dispatch, debouncedSearch]);
+    setPage(1); // Reset page on search or filter change
+  }, [debouncedSearch, statusFilter]);
 
-  const filteredArtists = debouncedSearch
-    ? artists.filter((artist) =>
-      artist.name.toLowerCase().includes(debouncedSearch.toLowerCase())
-    )
-    : artists;
+  useEffect(() => {
+    dispatch(fetchArtists({
+      status: statusFilter === 'all' ? undefined : statusFilter,
+      search: debouncedSearch || undefined,
+      page,
+      limit: 9
+    }));
+  }, [dispatch, debouncedSearch, statusFilter, page]);
+
+  const filteredArtists = artists;
 
   const handleCreate = () => {
     setSelectedArtist(null);
@@ -123,24 +131,37 @@ function Artists() {
       </section>
 
       <section className="space-y-3">
-        <div className="relative">
-          <label htmlFor="artist-search" className="sr-only">
-            Search artists
-          </label>
-          <Input
-            id="artist-search"
-            type="text"
-            placeholder="Search artists by name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            icon={<FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />}
-            className="pr-8 rounded-2xl bg-white/80 border border-slate-200 shadow-glass"
-            autoFocus={false}
-            aria-label="Search artists by name"
-          />
+        <div className="flex flex-col sm:flex-row gap-3 w-full">
+          <div className="relative flex-1">
+            <label htmlFor="artist-search" className="sr-only">
+              Search artists
+            </label>
+            <Input
+              id="artist-search"
+              type="text"
+              placeholder="Search artists by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              icon={<FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />}
+              className="pr-8 rounded-2xl bg-white/80 border border-slate-200 shadow-glass"
+              autoFocus={false}
+              aria-label="Search artists by name"
+            />
+          </div>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-white/80 border border-slate-200 text-slate-700 text-sm rounded-2xl focus:ring-primary-500 focus:border-primary-500 block p-2.5 shadow-glass outline-none min-w-[140px]"
+          >
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="pending">Pending</option>
+          </select>
         </div>
         <p className="text-sm text-blue-gray-500">
-          Showing <span className="font-semibold text-blue-gray-900">{filteredArtists.length}</span> artist{filteredArtists.length !== 1 && 's'}
+          Showing <span className="font-semibold text-blue-gray-900">{filteredArtists.length}</span> artist{filteredArtists.length !== 1 && 's'} {pagination?.total > 0 && `of ${pagination.total} total`}
         </p>
       </section>
 
@@ -153,16 +174,25 @@ function Artists() {
           onAction={!debouncedSearch ? handleCreate : undefined}
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          {filteredArtists.map((artist) => (
-            <ArtistCard
-              key={artist._id}
-              artist={artist}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+            {filteredArtists.map((artist) => (
+              <ArtistCard
+                key={artist._id}
+                artist={artist}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+          {pagination && pagination.pages > 1 && (
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pages}
+              onPageChange={setPage}
             />
-          ))}
+          )}
         </div>
       )}
 

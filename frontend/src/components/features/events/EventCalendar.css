@@ -1,0 +1,28 @@
+.rbc-card-override .rbc-toolbar button {
+  font-family: inherit;
+  border-radius: 6px;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+.rbc-card-override .rbc-toolbar button.rbc-active {
+  background-color: #f1f5f9;
+  box-shadow: none;
+  font-weight: 500;
+  color: #0ea5e9; /* primary-500 */
+}
+.rbc-card-override .rbc-toolbar button:hover {
+  background-color: #f8fafc;
+}
+.rbc-card-override .rbc-header {
+  padding: 8px 0;
+  font-weight: 600;
+  color: #334155;
+  border-bottom: 1px solid #e2e8f0;
+}
+.rbc-card-override .rbc-today {
+  background-color: #f0f9ff; /* primary-50 */
+}
+.rbc-card-override .rbc-event {
+  padding: 2px 6px;
+  font-size: 0.85rem;
+}

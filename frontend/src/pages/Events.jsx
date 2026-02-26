@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Button, Input, Chip } from '@material-tailwind/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { FiSearch, FiCalendar } from 'react-icons/fi';
+import { FiSearch, FiCalendar, FiList } from 'react-icons/fi';
 import EventCard from '../components/features/events/EventCard';
 import EventView from '../components/features/events/EventView';
+import EventCalendar from '../components/features/events/EventCalendar';
 import Modal from '../components/common/Modal';
 import EventForm from '../components/forms/EventForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
+import Pagination from '../components/common/Pagination';
 import { useToast } from '../context/ToastContext';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchEvents, createEvent, updateEvent, deleteEvent } from '../store/slices/eventSlice';
@@ -19,25 +21,32 @@ import { useDebounce } from '../hooks/useDebounce';
  */
 function Events() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState('upcoming');
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'calendar'
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('create'); // 'create', 'edit', 'view'
   const [selectedEvent, setSelectedEvent] = useState(null);
   const { success, error: showError } = useToast();
   const dispatch = useAppDispatch();
-  const { events, loading, error } = useAppSelector((state) => state.events);
+  const { events, pagination, loading, error } = useAppSelector((state) => state.events);
 
   const debouncedSearch = useDebounce(searchTerm, 500);
 
   useEffect(() => {
-    dispatch(fetchEvents({ status: debouncedSearch ? undefined : 'upcoming' }));
-  }, [dispatch, debouncedSearch]);
+    setPage(1); // Reset page on search or filter change
+  }, [debouncedSearch, statusFilter]);
 
-  const filteredEvents = debouncedSearch
-    ? events.filter((event) =>
-      event.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      event.venue?.toLowerCase().includes(debouncedSearch.toLowerCase())
-    )
-    : events;
+  useEffect(() => {
+    dispatch(fetchEvents({
+      status: statusFilter === 'all' ? undefined : statusFilter,
+      search: debouncedSearch || undefined,
+      page,
+      limit: 9
+    }));
+  }, [dispatch, debouncedSearch, statusFilter, page]);
+
+  const filteredEvents = events;
 
   const handleCreate = () => {
     setSelectedEvent(null);
@@ -124,24 +133,55 @@ function Events() {
       </section>
 
       <section className="space-y-3">
-        <div className="relative">
-          <label htmlFor="event-search" className="sr-only">
-            Search events
-          </label>
-          <Input
-            id="event-search"
-            type="text"
-            placeholder="Search events by title or venue..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            icon={<FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />}
-            className="pr-8 rounded-2xl bg-white/80 border border-slate-200 shadow-glass"
-            autoFocus={false}
-            aria-label="Search events by title or venue"
-          />
+        <div className="flex flex-col sm:flex-row gap-4 items-center w-full justify-between">
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <div className="relative flex-1">
+              <label htmlFor="event-search" className="sr-only">
+                Search events
+              </label>
+              <Input
+                id="event-search"
+                type="text"
+                placeholder="Search events by title or venue..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                icon={<FiSearch className="h-5 w-5 text-blue-gray-400" aria-hidden="true" />}
+                className="pr-8 rounded-2xl bg-white/80 border border-slate-200 shadow-glass"
+                autoFocus={false}
+                aria-label="Search events by title or venue"
+              />
+            </div>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="bg-white/80 border border-slate-200 text-slate-700 text-sm rounded-2xl focus:ring-primary-500 focus:border-primary-500 block p-2.5 shadow-glass outline-none min-w-[140px]"
+            >
+              <option value="all">All Statuses</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="ongoing">Ongoing</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div className="flex bg-white/80 p-1 rounded-xl shadow-sm border border-slate-100 w-fit shrink-0">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+              aria-label="List view"
+            >
+              <FiList className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'calendar' ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+              aria-label="Calendar view"
+            >
+              <FiCalendar className="w-5 h-5" />
+            </button>
+          </div>
         </div>
         <p className="text-sm text-blue-gray-500">
-          Displaying <span className="font-semibold text-blue-gray-900">{filteredEvents.length}</span> event{filteredEvents.length !== 1 && 's'}
+          Displaying <span className="font-semibold text-blue-gray-900">{filteredEvents.length}</span> event{filteredEvents.length !== 1 && 's'} {pagination?.total > 0 && `of ${pagination.total} total`}
         </p>
       </section>
 
@@ -151,18 +191,32 @@ function Events() {
           actionLabel={!debouncedSearch ? 'Add Event' : undefined}
           onAction={!debouncedSearch ? handleCreate : undefined}
         />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          {filteredEvents.map((event) => (
-            <EventCard
-              key={event._id}
-              event={event}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+      ) : viewMode === 'list' ? (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+            {filteredEvents.map((event) => (
+              <EventCard
+                key={event._id}
+                event={event}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+          {pagination && pagination.pages > 1 && (
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pages}
+              onPageChange={setPage}
             />
-          ))}
+          )}
         </div>
+      ) : (
+        <EventCalendar
+          events={filteredEvents}
+          onEventClick={handleView}
+        />
       )}
 
       <Modal

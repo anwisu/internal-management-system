@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Button, Spinner } from '@material-tailwind/react';
 import FormField from '../common/FormField';
 import { STATUS_OPTIONS } from '../../utils/constants';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 /**
  * Announcement Form component
@@ -92,16 +94,27 @@ function AnnouncementForm({ announcement = null, onSubmit, onCancel }) {
         required
       />
 
-      <FormField
-        label="Content"
-        name="content"
-        type="textarea"
-        value={formData.content}
-        onChange={handleChange}
-        error={errors.content}
-        rows={6}
-        required
-      />
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Content <span className="text-red-500">*</span>
+        </label>
+        <div className={`bg-white rounded-lg ${errors.content ? 'border-red-500 border' : ''}`}>
+          <ReactQuill
+            theme="snow"
+            value={formData.content}
+            onChange={(value) => {
+              setFormData((prev) => ({ ...prev, content: value }));
+              if (errors.content) {
+                setErrors((prev) => ({ ...prev, content: '' }));
+              }
+            }}
+            className="h-48 mb-12"
+          />
+        </div>
+        {errors.content && (
+          <p className="mt-1 text-sm text-red-500">{errors.content}</p>
+        )}
+      </div>
 
       <FormField
         label="Author"

@@ -12,7 +12,7 @@ import AnnouncementCard from '../components/features/announcements/AnnouncementC
 import EmptyState from '../components/common/EmptyState';
 import { Link } from 'react-router-dom';
 import { Button } from '@material-tailwind/react';
-import { FiActivity, FiCalendar, FiBell, FiAlertCircle } from 'react-icons/fi';
+import { FiActivity, FiCalendar, FiBell, FiAlertCircle, FiDollarSign } from 'react-icons/fi';
 
 /**
  * Dashboard page component
@@ -71,7 +71,7 @@ function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
           <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
             <CardBody className="p-0 space-y-2">
               <div className="flex items-center gap-3 text-blue-gray-500 text-sm">
@@ -126,6 +126,26 @@ function Dashboard() {
                   {stats?.announcements?.active || 0}
                 </span>{" "}
                 actively broadcasting
+              </p>
+            </CardBody>
+          </Card>
+
+          <Card className="rounded-2xl border border-white/70 bg-white/90 shadow-glass p-6 hover:-translate-y-1 hover:shadow-soft-lg transition">
+            <CardBody className="p-0 space-y-2">
+              <div className="flex items-center gap-3 text-blue-gray-500 text-sm">
+                <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
+                  <FiDollarSign className="w-5 h-5" aria-hidden="true" />
+                </div>
+                Ticketing Revenue (Upcoming)
+              </div>
+              <h3 className="text-4xl font-extrabold text-blue-gray-900">
+                ${stats?.events?.ticketing?.revenue || 0}
+              </h3>
+              <p className="text-sm text-blue-gray-500">
+                <span className="font-semibold text-primary-600">
+                  {stats?.events?.ticketing?.sold || 0} / {stats?.events?.ticketing?.capacity || 0}
+                </span>{" "}
+                tickets sold
               </p>
             </CardBody>
           </Card>

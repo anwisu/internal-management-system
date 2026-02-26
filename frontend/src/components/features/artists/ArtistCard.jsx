@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardBody, Chip, Button } from '@material-tailwind/react';
 import { PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { FiMusic } from 'react-icons/fi';
+import DOMPurify from 'dompurify';
 
 /**
  * Artist Card component
@@ -44,7 +45,10 @@ function ArtistCard({ artist, onView, onEdit, onDelete, hideActions = false }) {
             )}
           </div>
           {artist.bio && (
-            <p className="text-sm text-slate-600 line-clamp-3 flex-1">{artist.bio}</p>
+            <div
+              className="text-sm text-slate-600 line-clamp-3 flex-1 quill-content"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(artist.bio) }}
+            />
           )}
           {!hideActions && (
             <div className="flex flex-wrap gap-2 pt-2">

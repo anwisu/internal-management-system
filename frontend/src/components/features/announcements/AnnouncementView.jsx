@@ -3,6 +3,7 @@ import { Chip, Avatar } from '@material-tailwind/react';
 import { BsMegaphone } from "react-icons/bs";
 import { FiClock, FiUser } from 'react-icons/fi';
 import { formatDateTime } from '../../../utils/formatters';
+import DOMPurify from 'dompurify';
 
 /**
  * Announcement View component
@@ -66,9 +67,10 @@ function AnnouncementView({ announcement }) {
             {/* Main Content */}
             <div className="px-2">
                 <div className="prose prose-slate prose-lg max-w-none">
-                    <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-soft-sm leading-relaxed whitespace-pre-wrap text-slate-700 font-medium">
-                        {announcement.content}
-                    </div>
+                    <div
+                        className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-soft-sm leading-relaxed text-slate-700 font-medium quill-content"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(announcement.content) }}
+                    />
                 </div>
             </div>
         </div>

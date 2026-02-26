@@ -7,8 +7,16 @@ import { uploadToCloudinary, deleteOldImage } from '../utils/cloudinaryUpload.js
  */
 export const getArtists = async (req, res, next) => {
   try {
-    const { status, page = 1, limit = 10 } = req.query;
+    const { status, page = 1, limit = 10, search } = req.query;
     const query = status ? { status } : {};
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { genre: { $regex: search, $options: 'i' } },
+        { bio: { $regex: search, $options: 'i' } }
+      ];
+    }
 
     const artists = await Artist.find(query)
       .limit(limit * 1)

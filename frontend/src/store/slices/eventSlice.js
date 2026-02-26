@@ -9,7 +9,7 @@ export const fetchEvents = createAsyncThunk(
   async (filters = {}, { rejectWithValue }) => {
     try {
       const response = await eventService.getEvents(filters);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(error.message || 'Failed to fetch events');
     }
@@ -78,6 +78,7 @@ export const deleteEvent = createAsyncThunk(
 
 const initialState = {
   events: [],
+  pagination: { page: 1, limit: 10, total: 0, pages: 1 },
   selectedEvent: null,
   loading: false,
   error: null,
@@ -106,7 +107,10 @@ const eventSlice = createSlice({
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.loading = false;
-        state.events = action.payload;
+        state.events = action.payload.data || action.payload; // Fallback for components that might pass only data directly
+        if (action.payload.pagination) {
+          state.pagination = action.payload.pagination;
+        }
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false;

@@ -7,8 +7,16 @@ import { uploadToCloudinary, deleteOldImage } from '../utils/cloudinaryUpload.js
  */
 export const getEvents = async (req, res, next) => {
   try {
-    const { status, page = 1, limit = 10 } = req.query;
+    const { status, page = 1, limit = 10, search } = req.query;
     const query = status ? { status } : {};
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { venue: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
 
     const events = await Event.find(query)
       .populate('artists', 'name imageUrl')

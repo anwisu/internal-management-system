@@ -57,6 +57,11 @@ const validationSchema = Yup.object().shape({
     .nullable()
     .min(0, 'Ticket price must be a positive number')
     .typeError('Ticket price must be a number'),
+  ticketsSold: Yup.number()
+    .nullable()
+    .min(0, 'Tickets sold must be a positive number')
+    .max(Yup.ref('capacity'), 'Tickets sold cannot exceed capacity')
+    .typeError('Tickets sold must be a number'),
   artists: Yup.array().of(Yup.string()),
 });
 
@@ -82,6 +87,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
       artists: [],
       capacity: '',
       ticketPrice: '',
+      ticketsSold: '',
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
@@ -90,6 +96,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
           ...values,
           capacity: values.capacity ? parseInt(values.capacity, 10) : 0,
           ticketPrice: values.ticketPrice ? parseFloat(values.ticketPrice) : 0,
+          ticketsSold: values.ticketsSold ? parseInt(values.ticketsSold, 10) : 0,
           startDate: new Date(values.startDate),
           endDate: values.endDate ? new Date(values.endDate) : undefined,
         };
@@ -122,6 +129,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         artists: event.artists?.map((a) => (typeof a === 'object' ? a._id : a)) || [],
         capacity: event.capacity?.toString() || '',
         ticketPrice: event.ticketPrice?.toString() || '',
+        ticketsSold: event.ticketsSold?.toString() || '',
       });
 
       // Note: We don't add existing images to FilePond
@@ -306,7 +314,7 @@ function EventForm({ event = null, onSubmit, onCancel }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <FormField
           label="Capacity"
           name="capacity"
@@ -326,6 +334,16 @@ function EventForm({ event = null, onSubmit, onCancel }) {
           onBlur={formik.handleBlur}
           error={formik.touched.ticketPrice && formik.errors.ticketPrice}
           step="0.01"
+        />
+
+        <FormField
+          label="Tickets Sold"
+          name="ticketsSold"
+          type="number"
+          value={formik.values.ticketsSold}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.ticketsSold && formik.errors.ticketsSold}
         />
       </div>
 

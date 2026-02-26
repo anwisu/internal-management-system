@@ -33,8 +33,8 @@ const eventSchema = new mongoose.Schema(
         default: '',
       },
       url: {
-      type: String,
-      default: '',
+        type: String,
+        default: '',
       },
     },
     status: {
@@ -53,6 +53,10 @@ const eventSchema = new mongoose.Schema(
       default: 0,
     },
     ticketPrice: {
+      type: Number,
+      default: 0,
+    },
+    ticketsSold: {
       type: Number,
       default: 0,
     },

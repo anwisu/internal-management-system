@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { Button, Spinner } from '@material-tailwind/react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
@@ -158,16 +160,25 @@ function ArtistForm({ artist = null, onSubmit, onCancel }) {
         required
       />
 
-      <FormField
-        label="Bio"
-        name="bio"
-        type="textarea"
-        value={formik.values.bio}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={formik.touched.bio && formik.errors.bio}
-        rows={4}
-      />
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Bio
+        </label>
+        <div className={`bg-white rounded-lg ${formik.touched.bio && formik.errors.bio ? 'border-red-500 border' : ''}`}>
+          <ReactQuill
+            theme="snow"
+            value={formik.values.bio}
+            onChange={(value) => {
+              formik.setFieldValue('bio', value);
+            }}
+            onBlur={() => formik.setFieldTouched('bio', true)}
+            className="h-48 mb-12"
+          />
+        </div>
+        {formik.touched.bio && formik.errors.bio && (
+          <p className="mt-1 text-sm text-red-500">{formik.errors.bio}</p>
+        )}
+      </div>
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">

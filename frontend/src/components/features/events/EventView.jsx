@@ -78,10 +78,24 @@ function EventView({ event }) {
                         </div>
                     </div>
                     <div className="space-y-1">
+                        <p className="text-xs text-slate-500 uppercase font-semibold">Tickets Sold</p>
+                        <div className="flex items-center gap-2 text-slate-800 font-medium">
+                            <FiUsers className="w-4 h-4 text-slate-400" />
+                            <span>{event.ticketsSold ? event.ticketsSold.toLocaleString() : '0'}</span>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
                         <p className="text-xs text-slate-500 uppercase font-semibold">Ticket Price</p>
                         <div className="flex items-center gap-2 text-slate-800 font-medium">
                             <FiDollarSign className="w-4 h-4 text-slate-400" />
                             <span>{event.ticketPrice ? `$${event.ticketPrice.toFixed(2)}` : 'Free'}</span>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-xs text-slate-500 uppercase font-semibold">Est. Revenue</p>
+                        <div className="flex items-center gap-2 text-slate-800 font-medium">
+                            <FiDollarSign className="w-4 h-4 text-slate-400" />
+                            <span>{event.ticketsSold && event.ticketPrice ? `$${(event.ticketsSold * event.ticketPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '$0.00'}</span>
                         </div>
                     </div>
                 </div>

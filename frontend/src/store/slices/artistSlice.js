@@ -9,7 +9,7 @@ export const fetchArtists = createAsyncThunk(
   async (filters = {}, { rejectWithValue }) => {
     try {
       const response = await artistService.getArtists(filters);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(error.message || 'Failed to fetch artists');
     }
@@ -78,6 +78,7 @@ export const deleteArtist = createAsyncThunk(
 
 const initialState = {
   artists: [],
+  pagination: { page: 1, limit: 10, total: 0, pages: 1 },
   selectedArtist: null,
   loading: false,
   error: null,
@@ -106,7 +107,10 @@ const artistSlice = createSlice({
       })
       .addCase(fetchArtists.fulfilled, (state, action) => {
         state.loading = false;
-        state.artists = action.payload;
+        state.artists = action.payload.data || action.payload; // Fallback for components that might pass only data directly
+        if (action.payload.pagination) {
+          state.pagination = action.payload.pagination;
+        }
       })
       .addCase(fetchArtists.rejected, (state, action) => {
         state.loading = false;

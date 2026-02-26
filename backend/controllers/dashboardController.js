@@ -14,6 +14,7 @@ export const getDashboardStats = async (req, res, next) => {
       upcomingEvents,
       totalAnnouncements,
       activeAnnouncements,
+      eventTicketingStats,
     ] = await Promise.all([
       Artist.countDocuments(),
       Artist.countDocuments({ status: 'active' }),
@@ -21,7 +22,20 @@ export const getDashboardStats = async (req, res, next) => {
       Event.countDocuments({ status: 'upcoming' }),
       Announcement.countDocuments(),
       Announcement.countDocuments({ isActive: true }),
+      Event.aggregate([
+        { $match: { status: 'upcoming' } },
+        {
+          $group: {
+            _id: null,
+            totalCapacity: { $sum: '$capacity' },
+            totalTicketsSold: { $sum: '$ticketsSold' },
+            totalRevenue: { $sum: { $multiply: ['$ticketsSold', '$ticketPrice'] } }
+          }
+        }
+      ])
     ]);
+
+    const ticketing = eventTicketingStats[0] || { totalCapacity: 0, totalTicketsSold: 0, totalRevenue: 0 };
 
     res.json({
       data: {
@@ -32,6 +46,11 @@ export const getDashboardStats = async (req, res, next) => {
         events: {
           total: totalEvents,
           upcoming: upcomingEvents,
+          ticketing: {
+            capacity: ticketing.totalCapacity,
+            sold: ticketing.totalTicketsSold,
+            revenue: ticketing.totalRevenue,
+          }
         },
         announcements: {
           total: totalAnnouncements,

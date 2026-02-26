@@ -5,6 +5,7 @@ import Events from './pages/Events';
 import Announcements from './pages/Announcements';
 import Layout from './components/Layout';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Toast from './components/common/Toast';
 
 /**
@@ -13,24 +14,26 @@ import Toast from './components/common/Toast';
  */
 function App() {
   return (
-    <ToastProvider>
-      <Router
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      >
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/artists" element={<Artists />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/announcements" element={<Announcements />} />
-          </Routes>
-        </Layout>
-        <Toast />
-      </Router>
-    </ToastProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/artists" element={<Artists />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/announcements" element={<Announcements />} />
+            </Routes>
+          </Layout>
+          <Toast />
+        </Router>
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
 

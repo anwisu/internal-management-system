@@ -2,6 +2,7 @@ import { Card, CardBody, Chip, Button } from '@material-tailwind/react';
 import { PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { BsMegaphone } from "react-icons/bs";
 import { formatDate } from '../../../utils/formatters';
+import DOMPurify from 'dompurify';
 
 /**
  * Announcement Card component
@@ -52,9 +53,10 @@ function AnnouncementCard({ announcement, onView, onEdit, onDelete, hideActions 
             </div>
           </div>
           {announcement.content && (
-            <p className="text-sm text-slate-600 line-clamp-4">
-              {announcement.content}
-            </p>
+            <div
+              className="text-sm text-slate-600 line-clamp-4 quill-content"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(announcement.content) }}
+            />
           )}
         </div>
         {!hideActions && (

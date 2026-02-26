@@ -1,6 +1,7 @@
 import React from 'react';
 import { Chip, IconButton } from '@material-tailwind/react';
 import { FiMusic, FiMail, FiPhone, FiInstagram, FiTwitter, FiYoutube } from 'react-icons/fi';
+import DOMPurify from 'dompurify';
 
 /**
  * Artist View component
@@ -51,7 +52,10 @@ function ArtistView({ artist }) {
                 {artist.bio && (
                     <div className="prose prose-slate max-w-none">
                         <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Biography</h4>
-                        <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{artist.bio}</p>
+                        <div
+                            className="text-slate-700 leading-relaxed quill-content"
+                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(artist.bio) }}
+                        />
                     </div>
                 )}
 
